@@ -13,8 +13,10 @@ function (qual, response.group = NULL, return.all = TRUE, pagenumber = 1,
         pagesize <- "100"
         pagenumber <- "1"
     }
-    else if (as.numeric(pagesize) > 100) 
-        stop("PageSize is too big (max=100)")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     GETparameters <- paste("&QualificationTypeId=", qual, "&PageSize=", 
         pagesize, sep = "")
     if (!is.null(response.group)) {

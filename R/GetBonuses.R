@@ -13,6 +13,10 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, return.all = TRUE,
         stop("Specify HITId xor AssignmentId xor HITType")
     else if (!is.null(hit) & !is.null(hit.type) & !is.null(assignment)) 
         stop("Specify HITId xor AssignmentId xor HITType")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     if (return.all == TRUE) {
         pagenumber = "1"
         pagesize = "100"

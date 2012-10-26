@@ -1,0 +1,18 @@
+### CHANGES TO MTurkR 0.2 ###
+
+## SIGNIFICANT USER-VISIBLE CHANGES ##
+* A completely new GUI interface for managing MTurkR, which now suggests library(tcltk), has been added. The previous, text-based wizard remains available by calling mturkr.wizard("simple").
+* Support for ReviewPolicies has been added, both creating them using GenerateReviewPolicy() and retrieving their results using GetReviewResultsForHIT().
+* Support for AnswerKey data structures has been added, for use in CreateQualificationType().
+* Added simple checks for 'sortproperty', 'sortdirection', 'pagesize', and 'pagenumber' parameters in relevant functions.
+* Expanded support for QuestionForm data structures is currently under development and should be available in the next release.
+
+## BUG FIXES ##
+* A number of bug fixes have been corrected throughout the package. Most were minor and related to output, but some like the 'return.all' parameter in GetAssignments(), were producing unintended behavior.
+* Various mislabelled function parameters (used within functions) have been corrected (some were creating notes on R CMD check).
+* request() was modified to remove problematic whitespace characters when writing log entries (which made reading the log file into R problematic).
+
+## DOCUMENTATION ##
+* Fixed a number of minor errors in documentation.
+* Expanded documentation for functions associated with AnswerKey and ReviewPolicy data structures.
+* Expanded documentation for 'sortproperty' and 'sortdirection' parameters in relevant functions.

@@ -1,5 +1,5 @@
 ApproveAssignments <-
-function (assignments, feedback = NULL, rejected = TRUE, keypair = credentials(), 
+function (assignments, feedback = NULL, rejected = FALSE, keypair = credentials(), 
     print = FALSE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {
     if (!is.null(keypair)) {
@@ -52,12 +52,15 @@ function (assignments, feedback = NULL, rejected = TRUE, keypair = credentials()
     }
     Assignments <- data.frame(matrix(nrow = length(assignments), 
         ncol = 3))
-    names(Assignments) <- c("AssignmentId", "Valid", "Feedback")
+    names(Assignments) <- c("AssignmentId", "Feedback", "Valid")
     for (i in 1:length(assignments)) {
         x <- batch(assignments[i], feedback[i])
-        Assignments[i, ] <- c(assignments[i], x$valid, feedback[i])
+        if (!is.null(feedback)) 
+            Assignments[i, ] <- c(assignments[i], feedback[i], 
+                x$valid)
+        else Assignments[i, ] <- c(assignments[i], "", x$valid)
     }
     if (print == TRUE) 
-        cat(i, " Assignments Approved\n", sep = "")
+        cat(sum(x$valid), " Assignments Approved\n", sep = "")
     invisible(Assignments)
 }

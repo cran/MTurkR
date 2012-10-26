@@ -15,7 +15,7 @@ function (hit = NULL, old.hit.type = NULL, new.hit.type = NULL,
         !is.null(old.hit.type))) 
         stop("Must provide 'hit' xor 'old.hit.type'")
     if (!is.null(new.hit.type)) {
-        if (!is.null(hit.type) & (!is.null(title) || !is.null(description) || 
+        if (!is.null(new.hit.type) & (!is.null(title) || !is.null(description) || 
             !is.null(reward) || !is.null(duration))) 
             warning("HITType specified, HITType parameters (title, description, reward, duration) ignored")
     }

@@ -9,6 +9,14 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
         secret <- keypair[2]
     }
     else stop("No keypair provided or 'credentials' object not stored")
+    if (!sortproperty %in% c("AcceptTime", "SubmitTime", "AssignmentStatus")) 
+        stop("'sortproperty' must be 'AcceptTime' | 'SubmitTime' | 'AssignmentStatus'")
+    if (!sortdirection %in% c("Ascending", "Descending")) 
+        stop("'sortdirection' must be 'Ascending' | 'Descending'")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     if (!is.null(assignment)) {
         operation <- "GetAssignment"
         Assignments <- NA
@@ -55,15 +63,15 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
     }
     else {
         operation <- "GetAssignmentsForHIT"
-        if ((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & 
-            !is.null(hit.type))) 
-            stop("Must provide 'assignment' xor 'hit' xor 'hit.type'")
         if (return.all == TRUE) {
             sortproperty <- "SubmitTime"
             sortdirection <- "Ascending"
             pagesize <- "100"
             pagenumber <- "1"
         }
+        if ((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & 
+            !is.null(hit.type))) 
+            stop("Must provide 'assignment' xor 'hit' xor 'hit.type'")
         else if (!is.null(hit)) {
             hitlist <- hit
         }

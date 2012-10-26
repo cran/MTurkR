@@ -16,18 +16,18 @@ A lightweight menu-based Wizard (called by \code{\link{MTurkR.Wizard}}) is also 
 \tabular{ll}{
 Package: \tab MTurkR\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2012-04-24\cr
+Version: \tab 0.2\cr
+Date: \tab 2012-10-26\cr
 License: \tab GPL-2\cr
 }
 }
 \author{
 Thomas J. Leeper
 
-Maintainer: Thomas J. Leeper <leeper@u.northwestern.edu>
+Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 }
 \references{
-\href{http://www.thomasleeper.com/MTurkR}{MTurkR homepage}
+\href{http://www.thomasleeper.com/MTurkR/index.html}{MTurkR homepage}
 
 \href{http://www.mturk.com}{Amazon Mechanical Turk}
 

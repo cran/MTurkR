@@ -20,10 +20,12 @@ function (keypair = credentials(), print = TRUE, browser = FALSE,
             auth$timestamp, GETparameters, log.requests = log.requests, 
             sandbox = sandbox)
         if (request$valid == TRUE) {
-            balance <- strsplit(strsplit(request$xml, "<FormattedPrice>")[[1]][2], 
-                "</FormattedPrice>")[[1]][1]
+            balance <- strsplit(strsplit(request$xml, "<Amount>")[[1]][2], 
+                "</Amount>")[[1]][1]
+            balanceformatted <- strsplit(strsplit(request$xml, 
+                "<FormattedPrice>")[[1]][2], "</FormattedPrice>")[[1]][1]
             if (print == TRUE) 
-                cat("Balance: ", balance, "\n", sep = "")
+                cat("Balance: ", balanceformatted, "\n", sep = "")
             invisible(balance)
         }
         else if (request$valid == FALSE) {

@@ -21,6 +21,7 @@ function (qual, workers, value = "1", notify = FALSE, name = NULL,
         else if (is.na(as.numeric(value))) 
             stop("value is not or cannot be coerced to numeric")
     }
+    worker <- NULL
     batch <- function(worker, value) {
         GETparameters = paste("&QualificationTypeId=", qual, 
             "&WorkerId=", worker, "&IntegerValue=", value, "&SendNotification=", 
@@ -110,7 +111,7 @@ function (qual, workers, value = "1", notify = FALSE, name = NULL,
                 "NotEqualTo")) 
                 stop("Inappropriate comparator specified for conditional")
         }
-        if (is.null(conditional.period) || !comparator.period %in% 
+        if (is.null(conditional.period) || !conditional.period %in% 
             c("LifeTime", "ThirtyDays", "SevenDays", "OneDay")) 
             stop("Inappropriate or no period specified for conditional")
         if (is.null(conditional.value)) 

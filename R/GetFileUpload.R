@@ -14,7 +14,7 @@ function (assignment, questionIdentifier, download = FALSE, file.ext = NULL,
     names(FileUploadURL) <- c("Assignment", "RequestURL", "Valid")
     for (i in 1:length(assignment)) {
         GETparameters <- paste("&AssignmentId=", curlEscape(assignment), 
-            "&QuestionIdentifier=", curlEscape(questionidentifier), 
+            "&QuestionIdentifier=", curlEscape(questionIdentifier), 
             sep = "")
         auth <- authenticate(operation, secret)
         if (browser == TRUE) {

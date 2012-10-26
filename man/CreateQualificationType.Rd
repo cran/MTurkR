@@ -17,7 +17,7 @@ CreateQualificationType(name, description, status, keywords = NULL,
   \item{keywords}{An optional character string containing a comma-separated set of keywords by which workers can search for the QualificationType. Maximum 1000 characters. These cannot be modified by \code{\link{UpdateQualificationType}}.}
   \item{retry.delay}{An optional time (in seconds) indicating how long workers have to wait before requesting the QualificationType after an initial rejection.}
   \item{test}{An optional character string consisting of a QuestionForm data structure, used as a test a worker must complete before the  QualificationType is granted to them.}
-  \item{answerkey}{An optional character string consisting of an AnswerKey data structure, used to automatically score the test.}
+  \item{answerkey}{An optional character string consisting of an AnswerKey data structure, used to automatically score the test, perhaps as returned by \code{\link{GenerateAnswerKey}}.}
   \item{test.duration}{An optional time (in seconds) indicating how long workers have to complete the test.}
   \item{auto}{A logical indicating whether the Qualification is automatically granted to workers who request it. Default is \code{FALSE}.}
   \item{auto.value}{An optional parameter specifying the value that is automatically assigned to workers when they request it (if the Qualification is automatically granted).}
@@ -49,7 +49,9 @@ A function to create a QualificationType. Active QualificationTypes are visible 
 }
 \examples{
 \dontrun{
-qual1 <- CreateQualificationType(title="Worked for me before",description="This qualification is for people who have worked for me before",keywords="Worked for me before",sandbox=TRUE)
+qual1 <- CreateQualificationType(name="Worked for me before",
+		description="This qualification is for people who have worked for me before",
+		keywords="Worked for me before",sandbox=TRUE)
 qual1
 }
 }

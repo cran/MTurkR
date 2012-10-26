@@ -23,7 +23,7 @@ function (xml = NULL, xml.parsed = NULL)
         quals[i, 10] <- xmlValue(xmlChildren(q)$RetryDelayInSeconds)
         quals[i, 11] <- xmlValue(xmlChildren(q)$TestDurationInSeconds)
         quals[i, 12] <- xmlValue(xmlChildren(q)$Test)
-        quals[i, 13] <- xmlValue(xmlChildren(q)$QualificationTypeId)
+        quals[i, 13] <- xmlValue(xmlChildren(q)$AnswerKey)
     }
     return(quals)
 }

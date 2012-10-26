@@ -17,11 +17,11 @@ GetAssignment(	assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
   \item{hit}{An optional character string specifying the HITId whose assignments are to be returned, or a vector of character strings specifying multiple HITIds all of whose assignments are to be returned.}
   \item{hit.type}{An optional character string specifying the HITTypeId of one or more HITs whose assignments are to be returned.}
   \item{status}{An optional character string (of \dQuote{Approved},\dQuote{Rejected},\dQuote{Submitted}), specifying whether only a subset of assignments should be returned. If \code{NULL}, all assignments are returned (the default). Only applies when \code{hit} or \code{hit.type} are specified; ignored otherwise.}
-  \item{return.all}{If \code{TRUE} (the default), all available assignments are returned. Otherwise, only assignments falling within the specified \code{pagenumber} and \code{pagesize} search results are returned.}
+  \item{return.all}{If \code{TRUE}, all available assignments are returned. Otherwise, only assignments falling within the specified \code{pagenumber} and \code{pagesize} search results are returned.}
   \item{pagenumber}{An optional character string indicating which page of search results should be returned (only appropriate when specifying a single HITId). Most users can ignore this.}
-  \item{pagesize}{An optional character string indicating how many search results should be returned by each request (only appropriate when specifying a single HITId). Most users can ignore this.}
-  \item{sortproperty}{Most users can ignore this.}
-  \item{sortdirection}{Most users can ignore this.}
+  \item{pagesize}{An optional character string indicating how many search results should be returned by each request (only appropriate when specifying a single HITId), between 1 and 100. Most users can ignore this.}
+  \item{sortproperty}{One of \dQuote{AcceptTime}, \dQuote{SubmitTime}, \dQuote{AssignmentStatus}. Ignored if \code{return.all=TRUE}. Most users can ignore this.}
+  \item{sortdirection}{Either \dQuote{Ascending} or \dQuote{Descending}. Ignored if \code{return.all=TRUE}. Most users can ignore this.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}

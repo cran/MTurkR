@@ -1,5 +1,5 @@
 RevokeQualification <-
-function (quals, workers, reasons = NULL, keypair = credentials(), 
+function (qual, worker, reason = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {
     if (!is.null(keypair)) {
@@ -8,14 +8,14 @@ function (quals, workers, reasons = NULL, keypair = credentials(),
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "RevokeQualification"
-    if (!is.null(reasons) && length(reasons) > 1) 
+    if (!is.null(reason) && length(reason) > 1) 
         stop("Reason must be NULL or length==1; other configurations not currently supported")
-    batch <- function(qual, worker, reason) {
-        GETparameters <- paste("&QualificationTypeId=", qual, 
-            "&WorkerId=", worker, sep = "")
+    batch <- function(qualbatch, workerbatch, reasonbatch) {
+        GETparameters <- paste("&QualificationTypeId=", qualbatch, 
+            "&SubjectId=", workerbatch, sep = "")
         if (!is.null(reason)) 
             GETparameters <- paste(GETparameters, "&SendNotification=", 
-                curlEscape(reason), sep = "")
+                curlEscape(reasonbatch), sep = "")
         auth <- authenticate(operation, secret)
         if (browser == TRUE) {
             request <- request(keyid, auth$operation, auth$signature, 
@@ -28,12 +28,12 @@ function (quals, workers, reasons = NULL, keypair = credentials(),
                 sandbox = sandbox)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Qualification (", qual, ") for worker ", 
-                    worker, " Revoked\n", sep = "")
+                  cat("Qualification (", qualbatch, ") for worker ", 
+                    workerbatch, " Revoked\n", sep = "")
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat("Invalid Request for worker ", worker, 
+                  cat("Invalid Request for worker ", workerbatch, 
                     "\n", sep = "")
             }
             invisible(request)
@@ -42,31 +42,30 @@ function (quals, workers, reasons = NULL, keypair = credentials(),
     Qualifications <- data.frame(matrix(ncol = 4))
     names(Qualifications) <- c("WorkerId", "QualificationTypeId", 
         "Reason", "Valid")
-    if (length(quals) == 1 & length(workers) == 1) {
-        x <- batch(quals[1], workers[1], reasons)
-        Qualifications[1, ] = c(workers[1], quals[1], reasons, 
-            x$valid)
+    if (length(qual) == 1 & length(worker) == 1) {
+        x <- batch(qual[1], worker[1], reason)
+        Qualifications[1, ] = c(worker[1], qual[1], reason, x$valid)
     }
-    else if (length(quals) > 1 & length(workers) == 1) {
-        for (i in 1:length(quals)) {
-            x <- batch(quals[i], workers[1], reasons)
-            Qualifications[i, ] = c(workers[1], quals[i], reasons, 
+    else if (length(qual) > 1 & length(worker) == 1) {
+        for (i in 1:length(qual)) {
+            x <- batch(qual[i], worker[1], reason)
+            Qualifications[i, ] = c(worker[1], qual[i], reason, 
                 x$valid)
         }
     }
-    else if (length(quals) == 1 & length(workers) > 1) {
-        for (i in 1:length(workers)) {
-            x <- batch(quals[1], workers[i], reasons)
-            Qualifications[i, ] = c(workers[i], quals[1], reasons, 
+    else if (length(qual) == 1 & length(worker) > 1) {
+        for (i in 1:length(worker)) {
+            x <- batch(qual[1], worker[i], reason)
+            Qualifications[i, ] = c(worker[i], qual[1], reason, 
                 x$valid)
         }
     }
-    else if (length(quals) > 1 & length(workers) > 1) {
-        for (i in 1:length(workers)) {
-            for (j in 1:length(quals)) {
-                x <- batch(quals[j], workers[i], reasons)
-                Qualifications[i, ] = c(workers[i], quals[j], 
-                  reasons, x$valid)
+    else if (length(qual) > 1 & length(worker) > 1) {
+        for (i in 1:length(worker)) {
+            for (j in 1:length(qual)) {
+                x <- batch(qual[j], worker[i], reason)
+                Qualifications[i, ] = c(worker[i], qual[j], reason, 
+                  x$valid)
             }
         }
     }

@@ -1,5 +1,5 @@
 GetReviewableHITs <-
-function (hit.type = NULL, status = NULL, response.group = NULL, 
+function (hit.type = NULL, status = NULL, response.group = "Minimal", 
     return.all = TRUE, pagenumber = "1", pagesize = "10", sortproperty = "Enumeration", 
     sortdirection = "Ascending", keypair = credentials(), print = TRUE, 
     log.requests = TRUE, sandbox = FALSE) 
@@ -10,6 +10,15 @@ function (hit.type = NULL, status = NULL, response.group = NULL,
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "GetReviewableHITs"
+    if (!sortproperty %in% c("Title", "Reward", "Expiration", 
+        "CreationTime", "Enumeration")) 
+        stop("'sortproperty' must be 'Title' | 'Reward' | 'Expiration' | 'CreationTime' | 'Enumeration'")
+    if (!sortdirection %in% c("Ascending", "Descending")) 
+        stop("'sortdirection' must be 'Ascending' | 'Descending'")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     if (!is.null(response.group) && !response.group == "Minimal") 
         warning("ResponseGroup must be 'Minimal'; Minimal used as default")
     if (!is.null(status) && !status %in% c("Reviewable", "Reviewing")) 

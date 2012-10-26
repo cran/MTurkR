@@ -23,13 +23,13 @@ function (workers, assignments, amounts, reasons, keypair = credentials(),
             stop(paste("Non-numeric bonus amount requested for bonus ", 
                 i, sep = ""))
     }
-    Bonuses <- data.frame(matrix(nrow = length(workers), ncol = 8))
+    Bonuses <- data.frame(matrix(nrow = length(workers), ncol = 5))
     names(Bonuses) <- c("WorkerId", "AssignmentId", "Amount", 
         "Reason", "Valid")
     for (i in 1:length(workers)) {
         GETparameters <- paste("&WorkerId=", workers[i], "&AssignmentId=", 
             assignments[i], "&BonusAmount.1.Amount=", amounts[i], 
-            "&BonusAmount.1.CurrencyCode=USD", "&Reason=", reasons[i], 
+            "&BonusAmount.1.CurrencyCode=USD", "&Reason=", curlEscape(reasons[i]), 
             sep = "")
         auth <- authenticate(operation, secret)
         if (browser == TRUE) {

@@ -19,7 +19,7 @@ function (assignments, feedback = NULL, keypair = credentials(),
         else if (!length(feedback) == length(assignments)) 
             stop("Number of feedback is not 1 nor length(assignmetns)")
     }
-    Assignments <- data.frame(matrix(nrow = length(workers), 
+    Assignments <- data.frame(matrix(nrow = length(assignments), 
         ncol = 3))
     names(Assignments) <- c("AssignmentId", "Feedback", "Valid")
     for (i in 1:length(assignments)) {
@@ -38,8 +38,10 @@ function (assignments, feedback = NULL, keypair = credentials(),
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, log.requests = log.requests, 
                 sandbox = sandbox)
-            Assignments[i, ] <- c(assignments[i], feedback[i], 
-                request$valid)
+            if (!is.null(feedback)) 
+                Assignments[i, ] <- c(assignments[i], feedback[i], 
+                  request$valid)
+            else Assignments[i, ] <- c(assignments[i], "", request$valid)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
                   cat("Assignment (", assignments[i], ") Rejected\n", 
@@ -48,13 +50,11 @@ function (assignments, feedback = NULL, keypair = credentials(),
             if (request$valid == FALSE) {
                 if (print == TRUE) 
                   cat("Invalid request for assignment ", assignments[i], 
-                    "\n")
+                    "\n", sep = "")
             }
         }
     }
     if (print == TRUE) {
-        cat(sum(Assignments$Valid), " of ", i, " Assignments Rejected\n", 
-            sep = "")
         return(Assignments)
     }
     else invisible(Assignments)
