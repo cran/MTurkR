@@ -1,6 +1,6 @@
 searchhits <-
 function (response.group = NULL, return.all = TRUE, pagenumber = "1", 
-    pagesize = "10", sortproperty = "Name", sortdirection = "Ascending", 
+    pagesize = "10", sortproperty = "Enumeration", sortdirection = "Ascending", 
     keypair = credentials(), print = TRUE, log.requests = TRUE, 
     sandbox = FALSE, return.hit.dataframe = TRUE, return.qual.dataframe = TRUE) 
 {
@@ -10,6 +10,15 @@ function (response.group = NULL, return.all = TRUE, pagenumber = "1",
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "SearchHITs"
+    if (!sortproperty %in% c("Title", "Reward", "Expiration", 
+        "CreationTime", "Enumeration")) 
+        stop("'sortproperty' must be 'Title' | 'Reward' | 'Expiration' | 'CreationTime' | 'Enumeration'")
+    if (!sortdirection %in% c("Ascending", "Descending")) 
+        stop("'sortdirection' must be 'Ascending' | 'Descending'")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     if (return.all == TRUE) {
         sortproperty <- "Enumeration"
         sortdirection <- "Ascending"

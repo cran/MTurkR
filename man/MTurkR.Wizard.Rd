@@ -1,20 +1,23 @@
 \name{MTurkR.Wizard}
 \alias{MTurkR.Wizard}
 \alias{mturkr.wizard}
+\alias{wizard.simple}
 \title{Interactive MTurkR Mode}
-\description{An interactive, menu-based wizard to perform slimmed down versions of most MTurkR functions. Designed for beginners and those with aversion to the programming required elsewhere in the package.}
+\description{An interactive, menu-based wizard to perform MTurkR functions. Designed for beginners and those with aversion to the programming required elsewhere in the package.}
 \usage{
-MTurkR.Wizard(graphics = FALSE, log.requests = TRUE, sandbox = NULL)
+MTurkR.Wizard(style="tcltk", sandbox = FALSE)
+wizard.simple(graphics = FALSE, sandbox = NULL)
 }
 \arguments{
-  \item{graphics}{Optionally use graphical menus, if available, via Tcl/tk. See \code{\link{menu}}. Default is \code{FALSE}.}
-  \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
-  \item{sandbox}{Optionally execute all requests in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{style}{The default \code{tcltk}, opens a full-featured GUI for MTurkR. \code{simple} opens a simpler, text-based wizard (provided by \code{wizard.simple}) for performing some functions; \code{simpleGUI} opens the same simpler wizard, with graphical rather than text-based menus.}
+  \item{graphics}{Optionally use graphical menus, if available, for the simple wizard. See \code{\link{menu}}. Default is \code{FALSE}.}
+  \item{sandbox}{Optionally execute all requests in the MTurk sandbox rather than the live server.  Default (in \code{MTurkR.Wizard}) is FALSE; the default in \code{wizard.simple} is NULL (with the wizard prompting for a value on load.}
+%  \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
 }
 \details{
-An interactive, menu-based wizard (with optionally graphical menus) to perform most basic MTurkR operations. It is intended as a way for MTurk (and MTurkR) beginners to quickly create and monitor HITs; approve and reject assignments; notify, bonus, and block/unblock workers; manage Qualifications; monitor MTurk statistics; and interact with the MTurk Requester User Interface (RUI). All functionality accepts basic inputs interactively and executes requests without programming individual commands.
+An interactive, menu-based wizard (with optionally graphical menus) to perform most MTurkR operations. It is intended as a way for MTurk (and MTurkR) beginners to quickly create and monitor HITs; approve and reject assignments; notify, bonus, and block/unblock workers; manage Qualifications; monitor MTurk statistics; and interact with the MTurk Requester User Interface (RUI). All functionality accepts basic inputs interactively and executes requests without programming individual commands.
 
-\code{mturkr.wizard()} is an alias.
+\code{mturkr.wizard()} is an alias for \code{MTurkR.Wizard}.
 }
 \value{Currently returns nothing.}
 %\references{}

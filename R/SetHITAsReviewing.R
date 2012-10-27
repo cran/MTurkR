@@ -49,10 +49,10 @@ function (hit = NULL, hit.type = NULL, revert = FALSE, keypair = credentials(),
             if (request$valid == TRUE) {
                 if (print == TRUE) {
                   if (revert == "false") 
-                    cat("HIT (", hitlist[i], "set as Reviewing\n", 
+                    cat("HIT (", hitlist[i], ") set as Reviewing\n", 
                       sep = "")
                   if (revert == "true") 
-                    cat("HIT (", hitlist[i], "set as Reviewable\n", 
+                    cat("HIT (", hitlist[i], ") set as Reviewable\n", 
                       sep = "")
                 }
             }

@@ -1,5 +1,5 @@
 GenerateHTMLQuestion <-
-function (character = NULL, file = NULL) 
+function (character = NULL, file = NULL, frame.height = 450) 
 {
     if (!is.null(character)) 
         html <- character
@@ -11,6 +11,13 @@ function (character = NULL, file = NULL)
         }
         html <- gsub("\t", "", html)
     }
-    htmlquestion <- paste("<![CDATA[", html, "]]>", sep = "")
-    invisible(htmlquestion)
+    htmlquestion <- newXMLNode("HTMLQuestion", namespaceDefinitions = "http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd")
+    content.frame <- newXMLNode("HTMLContent", paste("<![CDATA[", 
+        html, "]]>", sep = ""), parent = htmlquestion)
+    height <- newXMLNode("FrameHeight", frame.height, parent = htmlquestion)
+    addChildren(htmlquestion, c(content.frame, height))
+    string <- toString.XMLNode(htmlquestion)
+    encoded <- curlEscape(string)
+    invisible(list(xml.parsed = htmlquestion, string = string, 
+        url.encoded = encoded))
 }

@@ -80,7 +80,7 @@ function (qual, description = NULL, status = NULL, retry.delay = NULL,
             if (print == TRUE) {
                 cat("Invalid Request\n")
             }
-            invisible(NA)
+            invisible(NULL)
         }
     }
 }

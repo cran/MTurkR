@@ -5,12 +5,12 @@
 \title{Reject a Worker's Qualification Request}
 \description{Reject a Worker's request for a Qualification.}
 \usage{
-RejectQualification(qual.requests, reason = NULL, 
+RejectQualification(qual.request, reason = NULL, 
 					keypair = credentials(), print = TRUE, browser = FALSE, 
 					log.requests = TRUE, sandbox = FALSE)
 }
 \arguments{
-  \item{qual.requests}{A character string containing a QualificationRequestId, or a vector of character strings containing multiple QualificationRequestIds (e.g., as returned by \code{\link{GetQualificationRequests}}).}
+  \item{qual.request}{A character string containing a QualificationRequestId, or a vector of character strings containing multiple QualificationRequestIds (e.g., as returned by \code{\link{GetQualificationRequests}}).}
   \item{reason}{An optional character string, or vector of character strings of length equal to length of the \code{qual.requests} parameter, supplying each worker with a reason for rejecting their request for the Qualification. Workers will see this message. Maximum of 1024 characters.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}

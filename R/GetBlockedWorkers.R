@@ -8,6 +8,14 @@ function (pagenumber = NULL, pagesize = NULL, keypair = credentials(),
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "GetBlockedWorkers"
+    if (!is.null(pagesize)) {
+        if (as.numeric(pagesize) > 65535) 
+            stop("'pagesize' must be <=65535")
+    }
+    if (!is.null(pagenumber)) {
+        if (as.numeric(pagenumber) < 1) 
+            stop("'pagenumber' must be > 1")
+    }
     GETparameters <- ""
     Workers <- NA
     auth <- authenticate(operation, secret)

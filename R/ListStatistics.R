@@ -36,8 +36,10 @@ function (stat = NULL, value.type = NULL, type = NULL)
         "Double", "GetRequesterWorkerStatistic"), c("PercentAssignmentsRejected", 
         "Double", "GetRequesterWorkerStatistic"), c("PercentKnownAnswersCorrect", 
         "Double", "GetRequesterWorkerStatistic"), c("PercentPluralityAnswersCorrect", 
-        "Double", "GetRequesterWorkerStatistic")))
+        "Double", "GetRequesterWorkerStatistic")), stringsAsFactors = FALSE)
     names(stats) <- c("Statistic", "ValueType", "Type")
+    Type <- NULL
+    ValueType <- NULL
     if (!is.null(stat) & is.null(type) & is.null(value.type)) 
         return(stats[stat, ])
     if (is.null(stat) & !is.null(type) & is.null(value.type)) 

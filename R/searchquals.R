@@ -10,6 +10,14 @@ function (query = NULL, only.mine = TRUE, only.requestable = FALSE,
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "SearchQualificationTypes"
+    if (!sortproperty %in% c("Name")) 
+        stop("'sortproperty' must be 'Name'")
+    if (!sortdirection %in% c("Ascending", "Descending")) 
+        stop("'sortdirection' must be 'Ascending' | 'Descending'")
+    if (as.numeric(pagesize) < 1 || as.numeric(pagesize) > 100) 
+        stop("'pagesize' must be in range (1,100)")
+    if (as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be > 1")
     GETparameters <- ""
     if (!is.null(query)) 
         GETparameters <- paste(GETparameters, "&Query=", curlEscape(query), 
@@ -72,6 +80,7 @@ function (query = NULL, only.mine = TRUE, only.requestable = FALSE,
         cat(dim(request$quals)[1], " of ", request$total, " QualificationTypes Retrieved\n", 
             sep = "")
         cat(request$quals$QualificationTypeId, "\n")
+        invisible(request$quals)
     }
     else if (request$valid == FALSE & print == TRUE) {
         cat("Invalid Request\n")

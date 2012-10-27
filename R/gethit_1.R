@@ -11,17 +11,12 @@ function (hit, response.group = NULL, keypair = credentials(),
     operation <- "GetHIT"
     GETparameters = ""
     if (!is.null(response.group)) {
-        if (!response.group %in% c("Minimal", "HITQuestion", 
-            "HITDetail", "HITAssignmentSummary")) 
-            stop("ResponseGroup must be in c(Minimal,HITQuestion,HITDetail,HITAssignmentSummary)")
-        if (length(response.group) == 1) 
-            GETparameters <- paste(GETparameters, "&ResponseGroup=", 
-                response.group, sep = "")
-        else {
-            for (i in 1:length(response.group)) {
-                GETparameters <- paste(GETparameters, "&ResponseGroup", 
-                  i - 1, "=", response.group[i], sep = "")
-            }
+        for (i in 1:length(response.group)) {
+            if (!response.group[i] %in% c("Minimal", "HITQuestion", 
+                "HITDetail", "HITAssignmentSummary")) 
+                stop("ResponseGroup must be in c(Minimal,HITQuestion,HITDetail,HITAssignmentSummary)")
+            GETparameters <- paste(GETparameters, "&ResponseGroup", 
+                i - 1, "=", response.group[i], sep = "")
         }
     }
     GETparameters <- paste("&HITId=", hit, sep = "")

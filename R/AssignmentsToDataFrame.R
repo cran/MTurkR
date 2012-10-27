@@ -6,11 +6,11 @@ function (xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
     assignments.xml <- xpathApply(xml.parsed, "//Assignment")
     if (!is.null(length(assignments.xml))) {
         assignments <- data.frame(matrix(nrow = length(assignments.xml), 
-            ncol = 11))
+            ncol = 12))
         names(assignments) <- c("HITId", "AssignmentId", "WorkerId", 
             "AssignmentStatus", "AutoApprovalTime", "AcceptTime", 
-            "SubmitTime", "ApprovalTime", "RejectionTime", "ApprovalRejectionTime", 
-            "Answer")
+            "SubmitTime", "SecondsOnHIT", "ApprovalTime", "RejectionTime", 
+            "ApprovalRejectionTime", "Answer")
         assignments$HITId <- xmlValue(xpathApply(xml.parsed, 
             paste("//HITId", sep = ""))[[1]])
         for (i in 1:length(assignments.xml)) {
@@ -22,6 +22,10 @@ function (xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
             assignments$AutoApprovalTime[i] <- xmlValue(xmlChildren(q)$AutoApprovalTime)
             assignments$AcceptTime[i] <- xmlValue(xmlChildren(q)$AcceptTime)
             assignments$SubmitTime[i] <- xmlValue(xmlChildren(q)$SubmitTime)
+            assignments$SecondsOnHIT[i] <- as.double(strptime(assignments$SubmitTime[i], 
+                format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")) - 
+                as.double(strptime(assignments$AcceptTime[i], 
+                  format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"))
             assignments$ApprovalTime[i] <- xmlValue(xmlChildren(q)$ApprovalTime)
             assignments$ApprovalRejectionTime[i] <- xmlValue(xmlChildren(q)$ApprovalTime)
             assignments$RejectionTime[i] <- xmlValue(xmlChildren(q)$RejectionTime)

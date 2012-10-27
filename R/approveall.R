@@ -13,7 +13,7 @@ function (hit = NULL, hit.type = NULL, feedback = NULL, keypair = credentials(),
         stop("Must specify 'hit' xor 'hit.type'")
     if (!is.null(hit)) {
         assignments <- GetAssignments(hit = hit, return.all = TRUE, 
-            keypair = keypair, log.requests = log.requests, sandbox = sandbox)$assignments$AssignmentId
+            keypair = keypair, log.requests = log.requests, sandbox = sandbox)$AssignmentId
     }
     else if (!is.null(hit.type)) {
         hitsearch <- SearchHITs(keypair = keypair, print = print, 
@@ -26,7 +26,7 @@ function (hit = NULL, hit.type = NULL, feedback = NULL, keypair = credentials(),
         for (i in 1:length(hitlist)) {
             assignments <- c(get, GetAssignments(hit = hitlist[i], 
                 return.all = TRUE, keypair = keypair, log.requests = log.requests, 
-                sandbox = sandbox))$assignments$AssignmentId
+                sandbox = sandbox))$AssignmentId
         }
     }
     if (is.null(feedback)) 

@@ -14,7 +14,7 @@ GetQualifications(	qual, status = NULL, return.all = TRUE,
   \item{status}{An optional character string specifying whether only \dQuote{Granted} or \dQuote{Revoked} Qualifications should be returned.}
   \item{return.all}{A logical indicating whether all Qualifications (as opposed to a specified page of the search results) should be returned. Default is \code{TRUE}.}
   \item{pagenumber}{An optional character string indicating which page of search results should be returned. Most users can ignore this.}
-  \item{pagesize}{An optional character string indicating how many search results should be returned by each request. Most users can ignore this.}
+  \item{pagesize}{An optional character string indicating how many search results should be returned by each request, between 1 and 100. Most users can ignore this.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
