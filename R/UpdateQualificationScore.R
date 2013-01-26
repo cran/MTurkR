@@ -53,12 +53,13 @@ function (qual, workers, values = NULL, increment = NULL, keypair = credentials(
                 request$valid)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Qualification Score for Worker ", workers[i], 
-                    " updated to ", values[i], "\n", sep = "")
+                  cat(i, ": Qualification Score for Worker ", 
+                    workers[i], " updated to ", values[i], "\n", 
+                    sep = "")
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat("Invalid Request for worker ", workers[i], 
+                  cat(i, ": Invalid Request for worker ", workers[i], 
                     "\n")
             }
         }

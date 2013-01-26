@@ -1,8 +1,9 @@
 GetAssignments <-
 function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL, 
     return.all = FALSE, pagenumber = "1", pagesize = "10", sortproperty = "SubmitTime", 
-    sortdirection = "Ascending", keypair = credentials(), print = TRUE, 
-    browser = FALSE, log.requests = TRUE, sandbox = FALSE, return.assignment.dataframe = TRUE) 
+    sortdirection = "Ascending", response.group = NULL, keypair = credentials(), 
+    print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE, 
+    return.assignment.dataframe = TRUE) 
 {
     if (!is.null(keypair)) {
         keyid <- keypair[1]
@@ -17,13 +18,35 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
         stop("'pagesize' must be in range (1,100)")
     if (as.numeric(pagenumber) < 1) 
         stop("'pagenumber' must be > 1")
+    GETresponsegroup <- ""
+    if (!is.null(response.group)) {
+        if (!is.null(assignment)) {
+            if (!response.group %in% c("Request", "Minimal", 
+                "AssignmentFeedback", "HITDetail", "HITQuestion")) 
+                stop("ResponseGroup must be in c(Request,Minimal,AssignmentFeedback,HITDetail,HITQuestion)")
+        }
+        else {
+            if (!response.group %in% c("Request", "Minimal", 
+                "AssignmentFeedback")) 
+                stop("ResponseGroup must be in c(Request,Minimal,AssignmentFeedback)")
+        }
+        if (length(response.group) == 1) 
+            GETresponsegroup <- paste("&ResponseGroup=", response.group, 
+                sep = "")
+        else {
+            for (i in 1:length(response.group)) {
+                GETresponsegroup <- paste("&ResponseGroup", i - 
+                  1, "=", response.group[i], sep = "")
+            }
+        }
+    }
     if (!is.null(assignment)) {
         operation <- "GetAssignment"
         Assignments <- NA
         HITs <- NA
         for (i in 1:length(assignment)) {
             GETparameters = paste("&AssignmentId=", assignment[i], 
-                sep = "")
+                GETresponsegroup, sep = "")
             auth <- authenticate(operation, secret)
             if (browser == TRUE) {
                 request <- request(keyid, auth$operation, auth$signature, 
@@ -51,7 +74,7 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
                       h$QualificationRequirements)
                   }
                   if (print == TRUE) 
-                    cat("Assignment ", assignment[i], " Retrieved\n", 
+                    cat(i, ": Assignment ", assignment[i], " Retrieved\n", 
                       sep = "")
                 }
             }
@@ -89,13 +112,13 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
             if (!is.null(status)) {
                 if (status %in% c("Approved", "Rejected", "Submitted")) 
                   GETiteration <- paste(GETiteration, "&AssignmentStatus=", 
-                    status, sep = "")
+                    status, GETresponsegroup, sep = "")
                 else status = NULL
             }
             GETiteration <- paste("&HITId=", batchhit, "&PageNumber=", 
                 pagenumber, "&PageSize=", pagesize, "&SortProperty=", 
                 sortproperty, "&SortDirection=", sortdirection, 
-                sep = "")
+                GETiteration, sep = "")
             auth <- authenticate(operation, secret)
             batch <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETiteration, log.requests = log.requests, 

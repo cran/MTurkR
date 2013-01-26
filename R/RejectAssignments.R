@@ -44,13 +44,13 @@ function (assignments, feedback = NULL, keypair = credentials(),
             else Assignments[i, ] <- c(assignments[i], "", request$valid)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Assignment (", assignments[i], ") Rejected\n", 
+                  cat(i, ": Assignment (", assignments[i], ") Rejected\n", 
                     sep = "")
             }
             if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat("Invalid request for assignment ", assignments[i], 
-                    "\n", sep = "")
+                  cat(i, ": Invalid request for assignment ", 
+                    assignments[i], "\n", sep = "")
             }
         }
     }

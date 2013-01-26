@@ -78,7 +78,7 @@ function (qual, description = NULL, status = NULL, retry.delay = NULL,
         }
         else if (request$valid == FALSE) {
             if (print == TRUE) {
-                cat("Invalid Request\n")
+                cat(": Invalid Request\n")
             }
             invisible(NULL)
         }

@@ -12,7 +12,7 @@ function (workers, reasons = NULL, keypair = credentials(), print = TRUE,
         if (!is.null(reasons)) {
             if (length(reasons) == 1) 
                 reasons <- rep(reasons, length(workers))
-            if (!length(workers) == length(reasons)) 
+            else if (!length(workers) == length(reasons)) 
                 stop("length(reason) must equal length(workers) or 1")
         }
     }
@@ -35,7 +35,7 @@ function (workers, reasons = NULL, keypair = credentials(), print = TRUE,
                 sandbox = sandbox)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Worker ", workers[i], " Unblocked\n", 
+                  cat(i, ": Worker ", workers[i], " Unblocked\n", 
                     sep = "")
                 if (is.null(reasons)) 
                   Workers[i, ] = c(workers[i], NA, request$valid)
@@ -44,7 +44,7 @@ function (workers, reasons = NULL, keypair = credentials(), print = TRUE,
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat("Invalid Request for worker ", workers[i], 
+                  cat(i, ": Invalid Request for worker ", workers[i], 
                     "\n", sep = "")
             }
         }

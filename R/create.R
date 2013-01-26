@@ -61,9 +61,9 @@ function (hit.type = NULL, question = NULL, expiration, assignments = "1",
     else GETparameters <- paste(GETparameters, "&MaxAssignments=", 
         assignments, sep = "")
     if (!is.null(response.group)) {
-        if (!response.group %in% c("Minimal", "HITQuestion", 
-            "HITDetail", "HITAssignmentSummary")) 
-            stop("ResponseGroup must be in c(Minimal,HITQuestion,HITDetail,HITAssignmentSummary)")
+        if (!response.group %in% c("Request", "Minimal", "HITDetail", 
+            "HITQuestion", "HITAssignmentSummary")) 
+            stop("ResponseGroup must be in c(Request,Minimal,HITDetail,HITQuestion,HITAssignmentSummary)")
         if (length(response.group) == 1) 
             GETparameters <- paste(GETparameters, "&ResponseGroup=", 
                 response.group, sep = "")

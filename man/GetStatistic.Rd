@@ -8,15 +8,15 @@
 \title{MTurk Worker and Requester Statistics}
 \description{Get a requester statistic or a statistic for a particular worker. \code{RequesterReport} and \code{WorkerReport} provide wrappers that return all available statistics.}
 \usage{
-GetStatistic(	statistic, period = "LifeToDate", count = NULL, 
-				keypair = credentials(), print = TRUE, browser = FALSE, 
-				log.requests = TRUE, sandbox = FALSE)
+GetStatistic(	statistic, period = "LifeToDate", count = NULL,
+				response.group = NULL, keypair = credentials(), print = TRUE, 
+				browser = FALSE, log.requests = TRUE, sandbox = FALSE)
 RequesterReport(period = "LifeToDate", keypair = credentials(), 
 				log.requests = TRUE, sandbox = FALSE, print = TRUE)
 
-GetWorkerStatistic(	worker, statistic, period = "LifeToDate", count = NULL, 
-					keypair = credentials(), print = TRUE, browser = FALSE, 
-					log.requests = TRUE, sandbox = FALSE)
+GetWorkerStatistic(	worker, statistic, period = "LifeToDate", count = NULL,
+					response.group = NULL, keypair = credentials(), print = TRUE,
+					browser = FALSE, log.requests = TRUE, sandbox = FALSE)
 WorkerReport(	worker, period = "LifeToDate", 
 				keypair = credentials(), log.requests = TRUE, 
 				sandbox = FALSE, print = TRUE)
@@ -26,6 +26,7 @@ WorkerReport(	worker, period = "LifeToDate",
   \item{statistic}{A character string containing the name of a statistic. Statistics can be retrieved from \code{\link{ListStatistics}}.}
   \item{period}{One of: \dQuote{OneDay}, \dQuote{SevenDays}, \dQuote{ThirtyDays}, \dQuote{LifeToDate}. Default is \dQuote{LifeToDate}.}
   \item{count}{If \code{period="OneDay"}, the number of days to return. Default is 1 (the most recent day).}
+  \item{response.group}{An optional character string (or vector of character strings) specifying what details to return of \dQuote{Request}, \dQuote{Minimal}, or \dQuote{Parameters}. For more information, see \url{http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CommonParametersArticle.html}.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}

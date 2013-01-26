@@ -1,13 +1,14 @@
 \name{GenerateAnswerKey}
 \alias{GenerateAnswerKey}
-\title{Generate AnswerKey}
+\title{Generate AnswerKey Data Structure}
 \description{Generate an AnswerKey data structure for a Qualification test.}
 \usage{
-GenerateAnswerKey(questions, scoring)
+GenerateAnswerKey(questions, scoring = NULL)
+
 }
 \arguments{
-  \item{questions}{A list containing a QuestionIdentifiers, AnswerOptions, AnswerScores, and DefaultScores. See MTurk API Documentation.}
-  \item{scoring}{A list containing a QualificationValueMapping. See MTurk API Documentation.}
+  \item{questions}{A dataframe containing QuestionIdentifiers, AnswerOptions, AnswerScores, and DefaultScores. See MTurk API Documentation.}
+  \item{scoring}{An optional list containing QualificationValueMapping information. See MTurk API Documentation.}
 }
 \details{This generates an AnswerKey data structure (from a list), which serves to automatically score a Qualification test, as specified in the \code{test} parameter of \code{\link{CreateQualificationType}}. An AnswerKey data structure is also returned by \code{\link{GetQualificationType}}.}
 \value{A list containing an AnswerKey data structure as an parsed XML tree, character string containing that tree, and a url-encoded character string.}

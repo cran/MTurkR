@@ -74,19 +74,19 @@ function (hit = NULL, hit.type = NULL, add.assignments = NULL,
                 request$valid)
             if (request$valid == TRUE & print == TRUE) {
                 if (!is.null(add.assignments) & !is.null(add.seconds)) 
-                  cat("HIT (", hitlist[i], ") Extended by ", 
+                  cat(i, ": HIT (", hitlist[i], ") Extended by ", 
                     add.assignments, " Assignments & ", add.seconds, 
                     " Seconds\n", sep = "")
                 else if (!is.null(add.assignments)) 
-                  cat("HIT (", hitlist[i], ") Extended by ", 
+                  cat(i, ": HIT (", hitlist[i], ") Extended by ", 
                     add.assignments, " Assignments\n", sep = "")
                 else if (!is.null(add.seconds)) 
-                  cat("HIT (", hitlist[i], ") Extended by ", 
+                  cat(i, ": HIT (", hitlist[i], ") Extended by ", 
                     add.seconds, " Seconds\n", sep = "")
             }
             else if (request$valid == FALSE & print == TRUE) {
-                cat("Invalid Request for HIT ", hitlist[i], " \n", 
-                  sep = "")
+                cat(i, ": Invalid Request for HIT ", hitlist[i], 
+                  " \n", sep = "")
             }
         }
     }

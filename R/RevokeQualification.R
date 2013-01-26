@@ -28,12 +28,12 @@ function (qual, worker, reason = NULL, keypair = credentials(),
                 sandbox = sandbox)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Qualification (", qualbatch, ") for worker ", 
+                  cat(i, ": Qualification (", qualbatch, ") for worker ", 
                     workerbatch, " Revoked\n", sep = "")
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat("Invalid Request for worker ", workerbatch, 
+                  cat(i, ": Invalid Request for worker ", workerbatch, 
                     "\n", sep = "")
             }
             invisible(request)

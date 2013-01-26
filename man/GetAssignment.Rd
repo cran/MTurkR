@@ -9,7 +9,7 @@
 GetAssignment(	assignment = NULL, hit = NULL, hit.type = NULL, status = NULL, 
 				return.all = FALSE, pagenumber = "1", pagesize = "10", 
 				sortproperty = "SubmitTime", sortdirection = "Ascending", 
-				keypair = credentials(), print = TRUE, browser = FALSE, 
+				response.group = NULL, keypair = credentials(), print = TRUE, browser = FALSE,
 				log.requests = TRUE, sandbox = FALSE, return.assignment.dataframe = TRUE)
 }
 \arguments{
@@ -22,6 +22,7 @@ GetAssignment(	assignment = NULL, hit = NULL, hit.type = NULL, status = NULL,
   \item{pagesize}{An optional character string indicating how many search results should be returned by each request (only appropriate when specifying a single HITId), between 1 and 100. Most users can ignore this.}
   \item{sortproperty}{One of \dQuote{AcceptTime}, \dQuote{SubmitTime}, \dQuote{AssignmentStatus}. Ignored if \code{return.all=TRUE}. Most users can ignore this.}
   \item{sortdirection}{Either \dQuote{Ascending} or \dQuote{Descending}. Ignored if \code{return.all=TRUE}. Most users can ignore this.}
+  \item{response.group}{An optional character string (or vector of character strings) specifying what details to return. If \code{assignment} is specified, \code{response.group} can include any of \dQuote{Request}, \dQuote{Minimal}, \dQuote{AssignmentFeedback}, \dQuote{HITDetail}, and/or \dQuote{HITQuestion}. If \code{hit} or \code{hit.type} is specified, \code{response.group} can include \dQuote{Request}, \dQuote{Minimal}, and/or \dQuote{AssignmentFeedback}. For more information, see \url{http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CommonParametersArticle.html}.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}

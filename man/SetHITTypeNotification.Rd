@@ -21,6 +21,8 @@ SetHITTypeNotification(	hit.type, notification = NULL, active = NULL,
 \details{
 Configure a notification to be sent to the requester whenever an event (specified in the \code{Notification} object) occurs. This is useful for receiving email notifications about, for example, when assignments are submitted or HITs are completed.
 
+Note: The API operation underlying \code{SetHITTypeNotification} and \code{\link{SendTestEventNotification}} has been deprecated by Amazon is not receiving ongoing development, but remains available for backward compatibility.
+
 \code{setnotification()} is an alias.
 }
 \value{A dataframe containing details of the Notification and whether or not the request was successfully executed by MTurk.}
