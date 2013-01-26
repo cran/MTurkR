@@ -30,6 +30,8 @@ CreateQualificationType(name, description, status, keywords = NULL,
 \details{
 A function to create a QualificationType. Active QualificationTypes are visible to workers and to other requesters. All characteristics of the QualificationType, other than the name and keywords, can later be modified by \code{\link{UpdateQualificationType}}. Qualifications can then be used to assign Qualifications to workers with \code{\link{AssignQualification}} and invoked as QualificationRequirements in \code{\link{RegisterHITType}} and/or \code{\link{CreateHIT}} operations.
 
+Note that when \code{browser=TRUE}, specifying this operation with \code{test} (and, optionally, \code{answer}) parameters may produce unintended behavior due to constraints on the length of the URL imposed by some web browsers.
+
 \code{createqual()} is an alias.
 }
 \value{A dataframe containing the QualificationTypeId of the newly created QualificationType and other details as specified in the request.}

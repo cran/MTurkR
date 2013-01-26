@@ -1,6 +1,6 @@
 Package: MTurkR
-Version: 0.2
-Date: 2012-10-26
+Version: 0.3
+Date: 2013-01-26
 Title: Access to Amazon Mechanical Turk Requester API via R
 Author: Thomas J. Leeper
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
@@ -12,6 +12,6 @@ Description: Provides access to the Amazon Mechanical Turk (MTurk)
         into R data structures (using the XML package).
 License: GPL-2
 URL: http://thomasleeper.com/MTurkR/index.html
-Packaged: 2012-10-27 17:05:45 UTC; Thomas
+Packaged: 2013-01-26 17:39:31 UTC; Thomas
 Repository: CRAN
-Date/Publication: 2012-10-27 17:19:26
+Date/Publication: 2013-01-26 19:00:12

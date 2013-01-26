@@ -1,8 +1,8 @@
 \name{ChangeHITType}
 \alias{ChangeHITType}
 \alias{changehittype}
-\title{Change HITType of a HIT}
-\description{Change the HITType of a HIT from one HITType to another. This will cause a HIT to no longer be grouped with HITs of the previous HITType and instead be grouped with those of the new HITType. This also allows you to change the payment associated with a HIT without expiring the current HIT and creating a new one.}
+\title{Change HITType Properties of a HIT}
+\description{Change the HITType of a HIT from one HITType to another (e.g., to change the title, description, or qualification requirements associated with a HIT). This will cause a HIT to no longer be grouped with HITs of the previous HITType and instead be grouped with those of the new HITType. You cannot change the payment associated with a HIT without expiring the current HIT and creating a new one.}
 \usage{
 ChangeHITType(	hit = NULL, old.hit.type = NULL, new.hit.type = NULL, 
 				title = NULL, description = NULL, reward = NULL, duration = NULL, keywords = NULL, 

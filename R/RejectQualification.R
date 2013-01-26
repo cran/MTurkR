@@ -37,13 +37,13 @@ function (qual.request, reason = NULL, keypair = credentials(),
                 QualificationRequests[1, ] <- c(qual.request[i], 
                   reason[i], request$valid)
                 if (print == TRUE) 
-                  cat("Qualification (", qual.request[i], ") Rejected\n", 
-                    sep = "")
+                  cat(i, ": Qualification (", qual.request[i], 
+                    ") Rejected\n", sep = "")
                 invisible(QualificationRequests)
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) {
-                  cat("Invalid Request for QualificationRequestId ", 
+                  cat(i, ": Invalid Request for QualificationRequestId ", 
                     qual.request, "\n", sep = "")
                   return(QualificationRequests)
                 }

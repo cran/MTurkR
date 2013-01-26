@@ -9,17 +9,21 @@ function (hit, response.group = NULL, keypair = credentials(),
     }
     else stop("No keypair provided or 'credentials' object not stored")
     operation <- "GetHIT"
-    GETparameters = ""
+    GETparameters <- paste("&HITId=", hit, sep = "")
     if (!is.null(response.group)) {
-        for (i in 1:length(response.group)) {
-            if (!response.group[i] %in% c("Minimal", "HITQuestion", 
-                "HITDetail", "HITAssignmentSummary")) 
-                stop("ResponseGroup must be in c(Minimal,HITQuestion,HITDetail,HITAssignmentSummary)")
-            GETparameters <- paste(GETparameters, "&ResponseGroup", 
-                i - 1, "=", response.group[i], sep = "")
+        if (!response.group %in% c("Request", "Minimal", "HITDetail", 
+            "HITQuestion", "HITAssignmentSummary")) 
+            stop("ResponseGroup must be in c(Request,Minimal,HITDetail,HITQuestion,HITAssignmentSummary)")
+        if (length(response.group) == 1) 
+            GETparameters <- paste(GETparameters, "&ResponseGroup=", 
+                response.group, sep = "")
+        else {
+            for (i in 1:length(response.group)) {
+                GETparameters <- paste(GETparameters, "&ResponseGroup", 
+                  i - 1, "=", response.group[i], sep = "")
+            }
         }
     }
-    GETparameters <- paste("&HITId=", hit, sep = "")
     auth <- authenticate(operation, secret)
     if (browser == TRUE) {
         request <- request(keyid, auth$operation, auth$signature, 

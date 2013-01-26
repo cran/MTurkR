@@ -12,20 +12,29 @@ function (name, description, status, keywords = NULL, retry.delay = NULL,
     operation <- "CreateQualificationType"
     if (!status %in% c("Active", "Inactive")) 
         stop("QualificationTypeStatus must be Active or Inactive")
-    GETparameters <- paste("&Name=", name, "&Description=", curlEscape(description), 
-        "&QualificationTypeStatus=", status, sep = "")
+    GETparameters <- paste("&Name=", curlEscape(name), "&Description=", 
+        curlEscape(description), "&QualificationTypeStatus=", 
+        status, sep = "")
     if (!is.null(keywords)) 
         GETparameters <- paste(GETparameters, "&Keywords=", curlEscape(keywords), 
             sep = "")
-    if (!is.null(test)) 
-        GETparameters <- paste(GETparameters, "&Test=", test, 
+    if (!is.null(test)) {
+        GETparameters <- paste(GETparameters, "&Test=", curlEscape(test), 
             "&TestDurationInSeconds=", test.duration, sep = "")
+        if (!is.null(answerkey)) {
+            t.temp <- QuestionFormToDataFrame(test)$Questions$QuestionIdentifier
+            a.temp <- AnswerKeyToDataFrame(answerkey)$Questions$QuestionIdentifier
+            if (!sum(a.temp %in% names(t.temp)) == length(a.temp)) 
+                stop("One or more QuestionIdentifiers in AnswerKey not in QuestionForm")
+            if (!sum(t.temp %in% names(a.temp)) == length(t.temp)) 
+                stop("One or more QuestionIdentifiers in QuestionForm not in AnswerKey")
+            GETparameters <- paste(GETparameters, "&AnswerKey=", 
+                curlEscape(answerkey), sep = "")
+        }
+    }
     if (!is.null(retry.delay)) 
         GETparameters <- paste(GETparameters, "&RetryDelayInSeconds=", 
             retry.delay, sep = "")
-    if (!is.null(answerkey)) 
-        GETparameters <- paste(GETparameters, "&AnswerKey=", 
-            answerkey, , , sep = "")
     if (!is.null(auto) && auto == TRUE & is.null(test) & !is.null(auto.value)) 
         GETparameters <- paste(GETparameters, "&AutoGranted=", 
             "true", "&AutoGrantedValue=", auto.value, sep = "")

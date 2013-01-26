@@ -39,10 +39,10 @@ function (hit = NULL, hit.type = NULL, response.group = NULL,
                 sandbox = sandbox)
             HITs[i, ] = c(hitlist[i], request$valid)
             if (request$valid == TRUE & print == TRUE) 
-                cat("HIT ", hitlist[i], " Disposed\n", sep = "")
+                cat(i, ": HIT ", hitlist[i], " Disposed\n", sep = "")
             else if (request$valid == FALSE & print == TRUE) {
-                cat("Invalid Request for HIT ", hitlist[i], "\n", 
-                  sep = "")
+                cat(i, ": Invalid Request for HIT ", hitlist[i], 
+                  "\n", sep = "")
             }
         }
     }

@@ -1,6 +1,7 @@
 statistic <-
-function (statistic, period = "LifeToDate", count = NULL, keypair = credentials(), 
-    print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
+function (statistic, period = "LifeToDate", count = NULL, response.group = NULL, 
+    keypair = credentials(), print = TRUE, browser = FALSE, log.requests = TRUE, 
+    sandbox = FALSE) 
 {
     if (!is.null(keypair)) {
         keyid <- keypair[1]

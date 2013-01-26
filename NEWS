@@ -1,3 +1,28 @@
+### CHANGES TO MTurkR 0.3 ###
+
+## SIGNIFICANT USER-VISIBLE CHANGES ##
+* To improve speed and reduce the number of API calls, HITsToDataFrame(), which is called by SearchHITs(), GetHIT(), etc., now uses the convenience function ListQualificationTypes() to return the name of QualificationRequirements when applicable.
+* Expanded the functionality of ContactWorkers() to allow a 'batch' mode, wherein workers are contacted with generic (i.e., not customized) email messages and subject lines in batches of 100.
+* Text sent to console when print=TRUE modifed slightly, so that iteration numbers are printed for each iteration (to monitor progress of mutli-item requests).
+* ResponseGroups updated to current API specifications for CreateHIT(), GetAssignments(), GetHIT(), GetStatistic(), GetWorkerStatistic(), and SearchHITs(). These now include an optional "Request" ResponseGroup to simply return information about the API call without executing that call.
+* AssignmentsToDataFrame() now returns a "RequesterFeedback" variable, providing access to feedback supplied to workers when GetAssignments() is called with the "AssignmentFeedback" ResponseGroup.
+* Updates were made to GenerateAnswerKey() (see documentation) and a new function AnswerKeyToDataFrame() was released.
+* QuestionFormToDataFrame() created. See documentation for details.
+
+## BUG FIXES ##
+* MTurk API operation 'ChangeHITTypeofHIT' typo was fixed to 'ChangeHITTypeOfHIT'.
+* A small change was made to BlockWorkers() to allow a single reason to be used for multiple workers, as originally intended.
+* Fixed bug in GetAssignments() to allow retrieval of assignments by status, as originally intended.
+* Fixed bug in AssignmentsToDataFrame() to correctly store 'ApprovalTime' or 'RejectionTime' in 'ApprovalRejectionTime'
+* Bug fixes to CreateQualificationType() related to parsing of XML in 'test' and 'answerkey' parameters.
+
+## DOCUMENTATION ##
+* Documentation for CreateQualificationType() notes web browser-dependent constraints on URL length that may produce unintended behavior when 'browser=TRUE' and a 'test' parameter is specified.
+* Added documentation for AnswerKeyToDataFrame()
+* Various copyedits.
+
+
+
 ### CHANGES TO MTurkR 0.2 ###
 
 ## SIGNIFICANT USER-VISIBLE CHANGES ##

@@ -1,5 +1,6 @@
 \name{XMLToDataFrame}
 %\alias{MTurkXMLToDataFrame}
+\alias{AnswerKeyToDataFrame}
 \alias{AssignmentsToDataFrame}
 \alias{BonusPaymentsToDataFrame}
 \alias{ExternalQuestionToDataFrame}
@@ -16,6 +17,7 @@
 \title{Parse MTurk XML Responses and Convert to Dataframe}
 \description{Parse MTurk XML Responses of specified types and convert the XML to an R dataframe.}
 \usage{
+AnswerKeyToDataFrame(xml=NULL, xml.parsed=NULL)
 AssignmentsToDataFrame(xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
 BonusPaymentsToDataFrame(xml = NULL, xml.parsed = NULL)
 ExternalQuestionToDataFrame(xml = NULL, xml.parsed = NULL)

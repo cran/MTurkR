@@ -23,7 +23,7 @@ GetBlockedWorkers(pagenumber = NULL, pagesize = NULL, keypair = credentials(),
   \item{workers}{A character string containing a WorkerId, or a vector of character strings containing multiple WorkerIds.}
   \item{reasons}{A character string containing a reason for blocking or unblocking a worker. This must have length 1 or length equal to the number of workers. It is required for \code{BlockWorker} and optional for \code{UnblockWorker}.}
   \item{pagenumber}{An optional integer (or character string) indicating which page of Blocked Workers search results should be returned. Most users can ignore this.}
-  \item{pagesize}{An optional integer (or character string) indicating how many Blocked Workers should be returned per page of results. Most users can ignore this.}
+  \item{pagesize}{An optional integer (or character string) indicating how many Blocked Workers should be returned per page of results. Most users can ignore this and the function will return the first 65,535 blocks.}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}

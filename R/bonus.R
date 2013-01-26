@@ -45,7 +45,7 @@ function (workers, assignments, amounts, reasons, keypair = credentials(),
                 reasons[i], request$valid)
             if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat("Bonus of ", amounts[i], " granted to ", 
+                  cat(i, ": Bonus of ", amounts[i], " granted to ", 
                     workers[i], " for assignment ", assignments[i], 
                     "\n", sep = "")
             }

@@ -12,8 +12,8 @@ function (workers, reasons, keypair = credentials(), print = TRUE,
         stop("Must specify one reason for block for all workers or one reason per worker")
     if (length(workers) > 1) {
         if (length(reasons) == 1) 
-            reason <- rep(reason, length(workers))
-        if (!length(workers) == length(reasons)) 
+            reasons <- rep(reasons, length(workers))
+        else if (!length(workers) == length(reasons)) 
             stop("length(reasons) must equal length(workers) or 1")
     }
     Workers <- data.frame(matrix(ncol = 3))
@@ -33,10 +33,11 @@ function (workers, reasons, keypair = credentials(), print = TRUE,
                 sandbox = sandbox)
             Workers[i, ] = c(workers[i], reasons[i], request$valid)
             if (request$valid == TRUE & print == TRUE) {
-                cat("Worker ", workers[i], " Blocked\n", sep = "")
+                cat(i, ": Worker ", workers[i], " Blocked\n", 
+                  sep = "")
             }
             else if (request$valid == FALSE & print == TRUE) {
-                cat("Invalid Request for worker ", workers[i], 
+                cat(i, ": Invalid Request for worker ", workers[i], 
                   "\n", sep = "")
             }
         }

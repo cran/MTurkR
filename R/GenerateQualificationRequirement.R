@@ -65,8 +65,10 @@ function (qual, comparator, value, preview = NULL, qual.number = NULL,
         else if (qual[i] == "Photo Moderation" | qual[i] == "Photo Moderation Masters" | 
             qual[i] == "PhotoModerationMasters") 
             qual[i] <- "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
-        if (qual[i] %in% c("2F1KVCNHMVHV8E9PBUB2A4J79LU20F", 
-            "2TGBB6BFMFFOM08IBMAFGGESC1UWJX")) 
+        else if (qual[i] == "Masters" | qual[i] == "MTurkMasters") 
+            qual[i] <- "2F1QJWKUDD8XADTFD2Q0G6UTO95ALH"
+        if (qual[i] %in% c("2ARFPLSP75KLA8M8DH1HTEQVJT3SY6", 
+            "2F1KVCNHMVHV8E9PBUB2A4J79LU20F", "2TGBB6BFMFFOM08IBMAFGGESC1UWJX")) 
             warning("QualificationTypeIds for Sandbox used")
         if (comparator[i] == "<") 
             comparator[i] <- "LessThan"
@@ -87,7 +89,11 @@ function (qual, comparator, value, preview = NULL, qual.number = NULL,
         if (qual[i] == "00000000000000000071" & !comparator[i] %in% 
             c("EqualTo", "NotEqualTo")) 
             stop("Worker_Locale (00000000000000000071) Requirement can only be used with 'EqualTo' or 'NotEqualTo' comparators")
-        else if (comparator[i] == "Exists" & !is.null(value[i])) 
+        if (qual[i] %in% c("2NDP2L92HECWY8NS8H3CK0CP5L9GHO", 
+            "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG", "2F1QJWKUDD8XADTFD2Q0G6UTO95ALH") && 
+            !comparator == "Exists") 
+            stop("Masters qualifications can only accept 'Exists' comparator")
+        if (comparator[i] == "Exists" & !is.null(value[i])) 
             value[i] <- NULL
         if (!is.null(preview)) {
             if (!is.na(preview[i])) {

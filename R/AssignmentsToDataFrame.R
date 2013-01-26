@@ -6,11 +6,11 @@ function (xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
     assignments.xml <- xpathApply(xml.parsed, "//Assignment")
     if (!is.null(length(assignments.xml))) {
         assignments <- data.frame(matrix(nrow = length(assignments.xml), 
-            ncol = 12))
+            ncol = 13))
         names(assignments) <- c("HITId", "AssignmentId", "WorkerId", 
             "AssignmentStatus", "AutoApprovalTime", "AcceptTime", 
             "SubmitTime", "SecondsOnHIT", "ApprovalTime", "RejectionTime", 
-            "ApprovalRejectionTime", "Answer")
+            "ApprovalRejectionTime", "RequesterFeedback", "Answer")
         assignments$HITId <- xmlValue(xpathApply(xml.parsed, 
             paste("//HITId", sep = ""))[[1]])
         for (i in 1:length(assignments.xml)) {
@@ -29,8 +29,9 @@ function (xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
             assignments$ApprovalTime[i] <- xmlValue(xmlChildren(q)$ApprovalTime)
             assignments$ApprovalRejectionTime[i] <- xmlValue(xmlChildren(q)$ApprovalTime)
             assignments$RejectionTime[i] <- xmlValue(xmlChildren(q)$RejectionTime)
-            if (is.na(assignments$ApprovalRejectionTime[i])) 
-                assignments$ApprovalRejectionTime[i] <- xmlValue(xmlChildren(q)$ApprovalTime)
+            if (!is.null(assignments$ApprovalRejectionTime[i])) 
+                assignments$ApprovalRejectionTime[i] <- xmlValue(xmlChildren(q)$RejectionTime)
+            assignments$RequesterFeedback[i] <- xmlValue(xmlChildren(q)$RequesterFeedback)
             assignments$Answer[i] <- xmlValue(xmlChildren(q)$Answer)
         }
         answers <- QuestionFormAnswersToDataFrame(xml.parsed = xml.parsed)

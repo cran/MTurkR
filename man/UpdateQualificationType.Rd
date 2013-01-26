@@ -16,7 +16,7 @@ UpdateQualificationType(qual, description = NULL, status = NULL,
   \item{status}{A character vector of \dQuote{Active} or \dQuote{Inactive}, indicating whether the QualificationType should be active and visible.}
   \item{retry.delay}{An optional time (in seconds) indicating how long workers have to wait before requesting the QualificationType after an initial rejection.}
   \item{test}{An optional character string consisting of a QuestionForm data structure, used as a test a worker must complete before the  QualificationType is granted to them.}
-  \item{answerkey}{An optional character string consisting of an AnswerKey data structure, used to automatically score the test.}
+  \item{answerkey}{An optional character string consisting of an AnswerKey data structure, used to automatically score the test. If a previous test with an associated AnswerKey is updated, the new test will not have an AnswerKey unless a new one is included in the same call (even if it is identical to the previous AnswerKey).}
   \item{test.duration}{An optional time (in seconds) indicating how long workers have to complete the test.}
   \item{auto}{A logical indicating whether the Qualification is automatically granted to workers who request it. Default is \code{FALSE}.}
   \item{auto.value}{An optional parameter specifying the value that is automatically assigned to workers when they request it (if the Qualification is automatically granted).}

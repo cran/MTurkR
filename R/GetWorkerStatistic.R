@@ -1,7 +1,7 @@
 GetWorkerStatistic <-
 function (worker, statistic, period = "LifeToDate", count = NULL, 
-    keypair = credentials(), print = TRUE, browser = FALSE, log.requests = TRUE, 
-    sandbox = FALSE) 
+    response.group = NULL, keypair = credentials(), print = TRUE, 
+    browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {
     if (!is.null(keypair)) {
         keyid <- keypair[1]

@@ -20,6 +20,8 @@ SendTestEventNotification(	notification, test.event.type,
 \details{
 Test a Notification configuration. The test mimics whatever the Notification configuration will do when the event described in \code{test.event.type} occurs.
 
+Note: The API operation underlying \code{\link{SetHITTypeNotification}} and \code{SendTestEventNotification} has been deprecated by Amazon is not receiving ongoing development, but remains available for backward compatibility.
+
 \code{notificationtest()} is an alias.
 }
 \value{Potentially an email sent to the email address specified in the \code{notification} parameter. Otherwise, nothing}

@@ -10,7 +10,7 @@ function (hit = NULL, old.hit.type = NULL, new.hit.type = NULL,
         secret <- keypair[2]
     }
     else stop("No keypair provided or 'credentials' object not stored")
-    operation <- "ChangeHITTypeofHIT"
+    operation <- "ChangeHITTypeOfHIT"
     if ((is.null(hit) & is.null(old.hit.type)) | (!is.null(hit) & 
         !is.null(old.hit.type))) 
         stop("Must provide 'hit' xor 'old.hit.type'")
@@ -60,18 +60,18 @@ function (hit = NULL, old.hit.type = NULL, new.hit.type = NULL,
             x <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, log.requests = log.requests, 
                 sandbox = sandbox)
-            if (!is.null(old.hit.type)) 
+            if (is.null(old.hit.type)) 
                 HITs[i, ] <- c(hitlist[i], NA, new.hit.type, 
                   x$valid)
             else HITs[i, ] <- c(hitlist[i], old.hit.type, new.hit.type, 
                 x$valid)
             if (print == TRUE) {
                 if (x$valid == TRUE) {
-                  cat("HITType of HIT ", hitlist[i], " Changed to: ", 
+                  cat(i, ": HITType of HIT ", hitlist[i], " Changed to: ", 
                     new.hit.type, "\n", sep = "")
                 }
                 else if (x$valid == FALSE) {
-                  cat("Invalid Request for HIT ", hitlist[i], 
+                  cat(i, ": Invalid Request for HIT ", hitlist[i], 
                     "\n", sep = "")
                 }
             }
