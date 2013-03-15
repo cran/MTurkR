@@ -42,12 +42,14 @@ function (xml = NULL, xml.parsed = NULL, xmlnodeset = NULL, hit = NULL,
             xmlnodeset <- xpathApply(xml.parsed, "//QualificationRequirement")
         if (!is.null(xmlnodeset)) 
             return(batch(xmlnodeset))
-        else return(NULL)
+        else
+			return(NULL)
     }
     else if (!is.null(hit)) {
         xmlnodeset <- xpathApply(xmlParse(GetHIT(hit = hit, keypair = credentials)$xml), 
             paste("//QualificationRequirement", sep = ""))
         return(batch(xmlnodeset))
     }
-    else return(NULL)
+    else
+		return(NULL)
 }

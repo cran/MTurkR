@@ -1,4 +1,6 @@
 RejectQualification <-
+RejectQualifications <-
+rejectrequest <-
 function (qual.request, reason = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

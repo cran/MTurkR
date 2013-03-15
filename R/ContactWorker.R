@@ -1,4 +1,6 @@
+contact <-
 ContactWorker <-
+ContactWorkers <-
 function (subjects, msgs, workers, batch = FALSE, keypair = credentials(), 
     print = FALSE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

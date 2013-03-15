@@ -1,4 +1,5 @@
 ExtendHIT <-
+extend <-
 function (hit = NULL, hit.type = NULL, add.assignments = NULL, 
     add.seconds = NULL, unique.request.token = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 

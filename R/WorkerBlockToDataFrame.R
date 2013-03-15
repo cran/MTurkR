@@ -17,5 +17,6 @@ function (xml = NULL, xml.parsed = NULL)
         }
         return(workers)
     }
-    else return(NULL)
+    else
+		return(NULL)
 }

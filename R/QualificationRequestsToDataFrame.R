@@ -31,7 +31,8 @@ function (xml = NULL, xml.parsed = NULL)
             if (length(answ) == 1) 
                 requests[i, 5] <- xmlValue(answ[[1]])
         }
-        return(QualificationRequests = requests)
+        return(list(QualificationRequests = requests))
     }
-    else return(NULL)
+    else
+		return(list(QualificationRequests = NULL))
 }

@@ -9,5 +9,6 @@ function (xml = NULL, xml.parsed = NULL)
         frame.height <- xmlValue(xmlChildren(xml.parsed)$FrameHeight)
         return(list(external.url = external.url, frame.height = frame.height))
     }
-    else return(NULL)
+    else
+		return(list(external.url = NULL, frame.height = NULL))
 }

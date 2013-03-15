@@ -1,4 +1,5 @@
 SearchQualificationTypes <-
+searchquals <-
 function (query = NULL, only.mine = TRUE, only.requestable = FALSE, 
     return.all = FALSE, pagenumber = "1", pagesize = "10", sortproperty = "Name", 
     sortdirection = "Ascending", keypair = credentials(), print = TRUE, 

@@ -1,4 +1,5 @@
 GetHITsForQualificationType <-
+gethitsbyqual <-
 function (qual, response.group = NULL, return.all = TRUE, pagenumber = 1, 
     pagesize = 100, keypair = credentials(), print = TRUE, log.requests = TRUE, 
     sandbox = FALSE, return.hit.dataframe = TRUE) 

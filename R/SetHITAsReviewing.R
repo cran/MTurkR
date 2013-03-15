@@ -1,4 +1,5 @@
 SetHITAsReviewing <-
+reviewing <-
 function (hit = NULL, hit.type = NULL, revert = FALSE, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

@@ -1,4 +1,5 @@
 RegisterHITType <-
+hittype <-
 function (title, description, reward, duration, keywords = NULL, 
     auto.approval.delay = NULL, qual.req = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 

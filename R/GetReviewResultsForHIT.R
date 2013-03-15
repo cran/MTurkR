@@ -1,4 +1,5 @@
 GetReviewResultsForHIT <-
+reviewresults <-
 function (hit, assignment = NULL, policy.level = NULL, retrieve.results = TRUE, 
     retrieve.actions = TRUE, keypair = credentials(), print = TRUE, 
     browser = FALSE, log.requests = TRUE, sandbox = FALSE) 

@@ -110,5 +110,7 @@ function (xml = NULL, xml.parsed = NULL)
             return(return.list)
         }
     }
-    else return(NULL)
+    else
+		return(list(AssignmentReviewResult = NULL, AssignmentReviewAction = NULL, 
+                HITReviewResult = NULL, HITReviewAction = NULL))
 }

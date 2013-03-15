@@ -1,4 +1,5 @@
 SetHITTypeNotification <-
+setnotification <-
 function (hit.type, notification = NULL, active = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

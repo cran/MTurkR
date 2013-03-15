@@ -1,3 +1,4 @@
+DisposeHIT <-
 disposehit <-
 function (hit = NULL, hit.type = NULL, response.group = NULL, 
     keypair = credentials(), print = TRUE, browser = FALSE, log.requests = TRUE, 

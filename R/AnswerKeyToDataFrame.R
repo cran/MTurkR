@@ -48,5 +48,6 @@ function (xml = NULL, xml.parsed = NULL)
         }
         return(list(Questions = answerkey, Scoring = mapping))
     }
-    else return(list(Questions = answerkey))
+    else
+		return(list(Questions = answerkey))
 }

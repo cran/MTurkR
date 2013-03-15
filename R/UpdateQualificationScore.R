@@ -1,4 +1,5 @@
 UpdateQualificationScore <-
+updatequalscore <-
 function (qual, workers, values = NULL, increment = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

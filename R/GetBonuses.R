@@ -1,4 +1,5 @@
 GetBonuses <-
+bonuses <-
 function (assignment = NULL, hit = NULL, hit.type = NULL, return.all = TRUE, 
     pagenumber = "1", pagesize = "100", keypair = credentials(), 
     print = TRUE, log.requests = TRUE, sandbox = FALSE, return.bonus.dataframe = TRUE) 
@@ -83,8 +84,7 @@ function (assignment = NULL, hit = NULL, hit.type = NULL, return.all = TRUE,
             }
             else {
                 if (print == TRUE) 
-                  print(paste("Invalid Request for HIT ", z$HITId[i], 
-                    sep = ""), quote = FALSE)
+                  cat("Invalid Request for HIT ", z$HITId[i], sep = "")
             }
         }
         if (return.bonus.dataframe == TRUE) {

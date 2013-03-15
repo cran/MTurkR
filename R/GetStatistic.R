@@ -1,4 +1,5 @@
 GetStatistic <-
+statistic <-
 function (statistic, period = "LifeToDate", count = NULL, response.group = NULL, 
     keypair = credentials(), print = TRUE, browser = FALSE, log.requests = TRUE, 
     sandbox = FALSE) 

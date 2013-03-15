@@ -1,4 +1,5 @@
 UpdateQualificationType <-
+updatequal <-
 function (qual, description = NULL, status = NULL, retry.delay = NULL, 
     test = NULL, answerkey = NULL, test.duration = NULL, auto = NULL, 
     auto.value = NULL, keypair = credentials(), print = TRUE, 

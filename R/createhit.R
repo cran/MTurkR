@@ -1,5 +1,8 @@
+create <-
+CreateHIT <-
 createhit <-
-function (hit.type = NULL, question = NULL, expiration, assignments = "1", 
+function (hit.type = NULL, question = NULL, validate.question = FALSE,
+	expiration, assignments = "1", 
     assignment.review.policy = NULL, hit.review.policy = NULL, 
     annotation = NULL, unique.request.token = NULL, title = NULL, 
     description = NULL, reward = NULL, duration = NULL, keywords = NULL, 
@@ -42,10 +45,27 @@ function (hit.type = NULL, question = NULL, expiration, assignments = "1",
                 GETparameters <- paste(GETparameters, hitlayoutparameters, 
                   sep = "")
         }
-        else stop("Must specify QuestionForm, HTMLQuestion, or ExternalQuestion for 'question' parameter; or a 'hitlayoutid'")
+        else
+			stop("Must specify QuestionForm, HTMLQuestion, or ExternalQuestion for 'question' parameter; or a 'hitlayoutid'")
     }
-    else GETparameters <- paste(GETparameters, "&Question=", 
-        curlEscape(question), sep = "")
+    else {
+		if(validate.question==TRUE){
+			if(!is.null(xmlChildren(xmlParse(question))$QuestionForm))
+				namespace <- xmlNamespace(xmlChildren(xmlParse(question))$QuestionForm)[1]
+			else if(!is.null(xmlChildren(xmlParse(question))$HTMLQuestion))
+				namespace <- xmlNamespace(xmlChildren(xmlParse(question))$HTMLQuestion)[1]
+			else if(!is.null(xmlChildren(xmlParse(question))$ExternalQuestion))
+				namespace <- xmlNamespace(xmlChildren(xmlParse(question))$ExternalQuestion)[1]
+			else
+				stop("No Namespace specified in 'question'")
+			validation <- xmlSchemaValidate(namespace, question)
+			if(!validation$status==0){
+				warning("'question' object does not validate against MTurk schema")
+				return(validation)
+			}
+		}
+		GETparameters <- paste(GETparameters, "&Question=", curlEscape(question), sep = "")
+	}
     if (is.null(expiration)) 
         stop("Must specify HIT LifetimeInSeconds for expiration parameter")
     else if (as.numeric(expiration) < 30 | as.numeric(expiration) > 

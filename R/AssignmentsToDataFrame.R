@@ -43,15 +43,16 @@ function (xml = NULL, xml.parsed = NULL, return.assignment.xml = FALSE)
         names(values) <- c(vars.returned, "AssignmentIdfromAnswers")
         for (j in 1:n.returned) {
             for (k in 1:dim(assignments)[1]) {
-                values$AssignmentIdfromAnswers[k] <- answers[answers$AssignmentId == 
-                  assignments$AssignmentId[k], "AssignmentId"][1]
-                values[k, j] <- answers[(answers$AssignmentId == 
-                  assignments$AssignmentId[k] & answers$QuestionIdentifier == 
-                  vars.returned[j]), ]$Combined.Answers
+                values$AssignmentIdfromAnswers[k] <-
+					answers[answers$AssignmentId == assignments$AssignmentId[k], "AssignmentId"][1]
+                values[k, j] <- 
+					answers[(answers$AssignmentId == assignments$AssignmentId[k] & 
+					answers$QuestionIdentifier == vars.returned[j]), ]$Combined.Answers
             }
         }
         assignments <- cbind(assignments, values)
         return(list(assignments = assignments, answers = answers))
     }
-    else return(NULL)
+    else
+		return(list(assignments = NULL, answers = NULL))
 }

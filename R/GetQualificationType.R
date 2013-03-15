@@ -1,4 +1,5 @@
 GetQualificationType <-
+qualtype <-
 function (qual, keypair = credentials(), print = TRUE, browser = FALSE, 
     log.requests = TRUE, sandbox = FALSE, return.qual.dataframe = TRUE) 
 {

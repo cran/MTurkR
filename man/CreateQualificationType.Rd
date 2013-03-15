@@ -6,7 +6,9 @@
 \usage{
 CreateQualificationType(name, description, status, keywords = NULL, 
 						retry.delay = NULL, test = NULL, answerkey = NULL, 
-						test.duration = NULL, auto = NULL, auto.value = NULL, 
+						test.duration = NULL,
+						validate.test = FALSE, validate.answerkey = FALSE,
+						auto = NULL, auto.value = NULL, 
 						keypair = credentials(), print = TRUE, browser = FALSE, 
 						log.requests = TRUE, sandbox = FALSE)
 }
@@ -19,6 +21,8 @@ CreateQualificationType(name, description, status, keywords = NULL,
   \item{test}{An optional character string consisting of a QuestionForm data structure, used as a test a worker must complete before the  QualificationType is granted to them.}
   \item{answerkey}{An optional character string consisting of an AnswerKey data structure, used to automatically score the test, perhaps as returned by \code{\link{GenerateAnswerKey}}.}
   \item{test.duration}{An optional time (in seconds) indicating how long workers have to complete the test.}
+  \item{validate.test}{A logical specifying whether the \code{test} parameter should be validated against the relevant MTurk schema prior to creating the QualificationType (operation will fail if it does not validate, and will return validation information). Default is \code{FALSE}.}
+  \item{validate.answerkey}{A logical specifying whether the \code{answerkey} parameter should be validated against the relevant MTurk schema prior to creating the QualificationType (operation will fail if it does not validate, and will return validation information). Default is \code{FALSE}.}
   \item{auto}{A logical indicating whether the Qualification is automatically granted to workers who request it. Default is \code{FALSE}.}
   \item{auto.value}{An optional parameter specifying the value that is automatically assigned to workers when they request it (if the Qualification is automatically granted).}
   \item{keypair}{A two-item character vector containing an AWS Access Key ID in the first position and the corresponding Secret Access Key in the second position. Set default with \code{\link{credentials}}.}

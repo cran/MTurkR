@@ -5,7 +5,8 @@
 \title{Create HIT}
 \description{Create a HIT. This is the most important function in the package. It creates a HIT based upon the specified parameters: (1) characteristics inherited from a HITType or specification of those parameters and (2) some kind of Question data structure.}
 \usage{
-CreateHIT(	hit.type = NULL, question = NULL, expiration, assignments = "1", 
+CreateHIT(	hit.type = NULL, question = NULL, validate.question = FALSE,
+			expiration, assignments = "1", 
 			assignment.review.policy = NULL, hit.review.policy = NULL, 
 			annotation = NULL, unique.request.token = NULL, 
 			title = NULL, description = NULL, reward = NULL, duration = NULL, keywords = NULL, 
@@ -17,6 +18,7 @@ CreateHIT(	hit.type = NULL, question = NULL, expiration, assignments = "1",
 \arguments{
   \item{hit.type}{An optional character string specifying the HITTypeId that this HIT should be visibly grouped with (and whose properties, e.g. reward amount, this HIT should inherit).}
   \item{question}{A mandatory (unless layoutid is specified) character string containing a QuestionForm, HTMLQuestion, or ExternalQuestion data structure. In lieu of a question parameter, a \code{hitlayoutid} and, optionally, \code{hitlayoutparameters} can be specified.}
+  \item{validate.question}{A logical specifying whether the \code{question} parameter should be validated against the relevant MTurk schema prior to creating the HIT (operation will fail if it does not validate, and will return validation information). Default is \code{FALSE}.}
   \item{expiration}{The time (in seconds) that the HIT should be available to workers. Must be between 30 and 31536000 seconds.}
   \item{assignments}{A character string specifying the number of assignments}
   \item{assignment.review.policy}{An optional character string containing an XML-formatted Assignment-level ReviewPolicy data structure. MTurkR currently does not provide functionality to generate a ReviewPolicy, but users who generate their own ReviewPolicy should be able to use this parameter.}
@@ -70,10 +72,10 @@ hitlayoutid="23ZGOOGQSCM61T1H5H9U0U00OQWFFU",
 hitlayoutparameters=a)
 
 b <- GenerateExternalQuestion("http://www.example.com/myhit.html","400")
-CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", question=b)
+CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", question=b$string)
 
 CreateHIT(title="Survey",description="5 question survey",reward=".10",
-duration=seconds(days=4),keywords="survey, questionnaire", question=b)
+duration=seconds(days=4),keywords="survey, questionnaire", question=b$string)
 }
 }
 \keyword{HITs}
