@@ -17,6 +17,10 @@ wizard.simple(graphics = FALSE, sandbox = NULL)
 \details{
 An interactive, menu-based wizard (with optionally graphical menus) to perform most MTurkR operations. It is intended as a way for MTurk (and MTurkR) beginners to quickly create and monitor HITs; approve and reject assignments; notify, bonus, and block/unblock workers; manage Qualifications; monitor MTurk statistics; and interact with the MTurk Requester User Interface (RUI). All functionality accepts basic inputs interactively and executes requests without programming individual commands.
 
+Two particularly helpful features are worth highlighting. The wizard provides a point-and-click interface for approving and rejecting individual assignments, that interactively displays assignment content and executes approval/rejection decisions with ease. The wizard also provides analogous functionality for granting and rejecting qualification requests.
+
+The wizard remains under active development and detailed documentation will hopefully be available under a subsequent release.
+
 \code{mturkr.wizard()} is an alias for \code{MTurkR.Wizard}.
 }
 \value{Currently returns nothing.}

@@ -37,5 +37,6 @@ function (xml = NULL, xml.parsed = NULL)
         }
         return(Qualifications = quals)
     }
-    else return(NULL)
+    else
+		return(list(Qualifications = NULL))
 }

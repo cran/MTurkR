@@ -1,4 +1,5 @@
 SendTestEventNotification <-
+notificationtest <-
 function (notification, test.event.type = "HITExpired", keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

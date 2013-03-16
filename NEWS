@@ -1,3 +1,15 @@
+### CHANGES TO MTurkR 0.3.5 ###
+
+## SIGNIFICANT USER-VISIBLE CHANGES ##
+* CreateHIT() now provides an option to validate the 'question' parameter for HTMLQuestion, ExternalQuestion, and QuestionForm HIT structures.
+* CreateQualificationType() now provides options to validate the 'test' and/or 'answerkey' parameters for QuestionForm and AnswerKey structures, respectively.
+* GenerateAnswerKey() was modified to accept slightly different inputs for the 'questions' parameter. A new function, AnswerKeyTemplate(), produces a user-modifiable template (as a list) for that parameter based on a QuestionForm data structure for which an AnswerKey is desired.
+* When internal functions (described in the documentation of XMLToDataFrame) that normally return named lists have nothing to translate to a dataframe, they now return named lists with NULL values rather than simply a single NULL.
+
+## BUG FIXES ##
+* Fixed bug in GetAssignments() that prevented the return of assignments for an entire HITType or for multiple HITs. Specifically, previous version was retrieving assignments via the API but not returning them to the user. (h/t Robert Vesco)
+
+
 ### CHANGES TO MTurkR 0.3 ###
 
 ## SIGNIFICANT USER-VISIBLE CHANGES ##
@@ -15,6 +27,7 @@
 * Fixed bug in GetAssignments() to allow retrieval of assignments by status, as originally intended.
 * Fixed bug in AssignmentsToDataFrame() to correctly store 'ApprovalTime' or 'RejectionTime' in 'ApprovalRejectionTime'
 * Bug fixes to CreateQualificationType() related to parsing of XML in 'test' and 'answerkey' parameters.
+* Modified credentials() to pass CRAN checks.
 
 ## DOCUMENTATION ##
 * Documentation for CreateQualificationType() notes web browser-dependent constraints on URL length that may produce unintended behavior when 'browser=TRUE' and a 'test' parameter is specified.

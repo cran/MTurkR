@@ -1,4 +1,5 @@
 ChangeHITType <-
+changehittype <-
 function (hit = NULL, old.hit.type = NULL, new.hit.type = NULL, 
     title = NULL, description = NULL, reward = NULL, duration = NULL, 
     keywords = NULL, auto.approval.delay = NULL, qual.req = NULL, 

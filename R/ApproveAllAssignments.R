@@ -1,3 +1,4 @@
+approveall <-
 ApproveAllAssignments <-
 function (hit = NULL, hit.type = NULL, feedback = NULL, keypair = credentials(), 
     print = FALSE, log.requests = TRUE, sandbox = FALSE) 

@@ -53,5 +53,6 @@ function (xml = NULL, xml.parsed = NULL, return.hit.xml = FALSE,
             return(list(HITs = HITs, QualificationRequirements = quals))
         else return(list(HITs = HITs))
     }
-    else return(NULL)
+    else
+		return(list(HITs = NULL))
 }

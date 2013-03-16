@@ -21,5 +21,6 @@ function (xml = NULL, xml.parsed = NULL)
         }
         return(bonuses)
     }
-    else return(NULL)
+    else
+		return(NULL)
 }

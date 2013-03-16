@@ -1,4 +1,5 @@
 SearchHITs <-
+searchhits <-
 function (response.group = NULL, return.all = TRUE, pagenumber = "1", 
     pagesize = "10", sortproperty = "Enumeration", sortdirection = "Ascending", 
     keypair = credentials(), print = TRUE, log.requests = TRUE, 

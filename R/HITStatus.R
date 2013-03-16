@@ -1,4 +1,5 @@
 HITStatus <-
+status <-
 function (hit = NULL, hit.type = NULL, keypair = credentials(), 
     print = TRUE, log.requests = TRUE, sandbox = FALSE) 
 {

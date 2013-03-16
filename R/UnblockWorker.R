@@ -1,4 +1,6 @@
 UnblockWorker <-
+UnblockWorkers <-
+unblock <-
 function (workers, reasons = NULL, keypair = credentials(), print = TRUE, 
     browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

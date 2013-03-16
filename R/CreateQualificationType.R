@@ -1,7 +1,9 @@
 CreateQualificationType <-
+createqual <-
 function (name, description, status, keywords = NULL, retry.delay = NULL, 
-    test = NULL, answerkey = NULL, test.duration = NULL, auto = NULL, 
-    auto.value = NULL, keypair = credentials(), print = TRUE, 
+    test = NULL, answerkey = NULL, test.duration = NULL,
+	validate.test = FALSE, validate.answerkey = FALSE,
+	auto = NULL, auto.value = NULL, keypair = credentials(), print = TRUE, 
     browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {
     if (!is.null(keypair)) {
@@ -19,14 +21,36 @@ function (name, description, status, keywords = NULL, retry.delay = NULL,
         GETparameters <- paste(GETparameters, "&Keywords=", curlEscape(keywords), 
             sep = "")
     if (!is.null(test)) {
-        GETparameters <- paste(GETparameters, "&Test=", curlEscape(test), 
-            "&TestDurationInSeconds=", test.duration, sep = "")
+        if(validate.test==TRUE){
+			if(!is.null(xmlChildren(xmlParse(test))$QuestionForm))
+				namespace <- xmlNamespace(xmlChildren(xmlParse(test))$QuestionForm)[1]
+			else
+				stop("No Namespace specified in 'test'")
+			validation <- xmlSchemaValidate(namespace, test)
+			if(!validation$status==0){
+				warning("'test' object does not validate against MTurk schema")
+				return(validation)
+			}
+			}
+		GETparameters <- paste(GETparameters, "&Test=", curlEscape(test), 
+			"&TestDurationInSeconds=", test.duration, sep = "")
         if (!is.null(answerkey)) {
-            t.temp <- QuestionFormToDataFrame(test)$Questions$QuestionIdentifier
+            if(validate.answerkey==TRUE){
+				if(!is.null(xmlChildren(xmlParse(answerkey))$AnswerKey))
+					namespace <- xmlNamespace(xmlChildren(xmlParse(answerkey))$AnswerKey)[1]
+				else
+					stop("No Namespace specified in 'answerkey'")
+				validation <- xmlSchemaValidate(namespace, answerkey)
+				if(!validation$status==0){
+					warning("'answerkey' object does not validate against MTurk schema")
+					return(validation)
+				}
+			}
+			t.temp <- QuestionFormToDataFrame(test)$Questions$QuestionIdentifier
             a.temp <- AnswerKeyToDataFrame(answerkey)$Questions$QuestionIdentifier
-            if (!sum(a.temp %in% names(t.temp)) == length(a.temp)) 
+            if (!sum(a.temp %in% t.temp) == length(a.temp)) 
                 stop("One or more QuestionIdentifiers in AnswerKey not in QuestionForm")
-            if (!sum(t.temp %in% names(a.temp)) == length(t.temp)) 
+            if (!sum(t.temp %in% a.temp) == length(t.temp)) 
                 stop("One or more QuestionIdentifiers in QuestionForm not in AnswerKey")
             GETparameters <- paste(GETparameters, "&AnswerKey=", 
                 curlEscape(answerkey), sep = "")

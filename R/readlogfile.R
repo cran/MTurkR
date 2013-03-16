@@ -7,8 +7,10 @@ function (filename = NULL, shell = FALSE)
         cat("No Log File Found\n")
     else {
         if (shell == FALSE) {
-            invisible(read.delim(filename, header = TRUE, sep = "\t", 
-                quote = "", stringsAsFactors = FALSE))
+            logfile <- read.delim(filename, header = TRUE, sep = "\t", 
+                quote = "", stringsAsFactors = FALSE)
+			#class(logfile) <- c("data.frame","MTurkRlog")
+			invisible(logfile)
         }
         else if (shell == TRUE) {
             shell.exec(filename)

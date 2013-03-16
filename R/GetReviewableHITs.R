@@ -1,4 +1,5 @@
 GetReviewableHITs <-
+reviewable <-
 function (hit.type = NULL, status = NULL, response.group = "Minimal", 
     return.all = TRUE, pagenumber = "1", pagesize = "10", sortproperty = "Enumeration", 
     sortdirection = "Ascending", keypair = credentials(), print = TRUE, 

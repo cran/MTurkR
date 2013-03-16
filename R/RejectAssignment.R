@@ -1,4 +1,6 @@
 RejectAssignment <-
+RejectAssignments <-
+reject <-
 function (assignments, feedback = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

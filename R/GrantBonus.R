@@ -1,4 +1,6 @@
 GrantBonus <-
+bonus <-
+paybonus <-
 function (workers, assignments, amounts, reasons, keypair = credentials(), 
     print = FALSE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
 {

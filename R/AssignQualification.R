@@ -1,4 +1,6 @@
+assignqual <-
 AssignQualification <-
+AssignQualifications <-
 function (qual, workers, value = "1", notify = FALSE, name = NULL, 
     description = NULL, keywords = NULL, status = NULL, retry.delay = NULL, 
     test = NULL, answerkey = NULL, test.duration = NULL, auto = NULL, 

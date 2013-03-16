@@ -1,3 +1,5 @@
+AccountBalance <-
+accountbalance <-
 getbalance <-
 function (keypair = credentials(), print = TRUE, browser = FALSE, 
     log.requests = TRUE, sandbox = FALSE) 
@@ -24,8 +26,8 @@ function (keypair = credentials(), print = TRUE, browser = FALSE,
                 "</Amount>")[[1]][1]
             balanceformatted <- strsplit(strsplit(request$xml, 
                 "<FormattedPrice>")[[1]][2], "</FormattedPrice>")[[1]][1]
-            if (print == TRUE) 
-                cat("Balance: ", balanceformatted, "\n", sep = "")
+            if (print == TRUE)
+                message(paste("Balance: ", balanceformatted, "\n", sep = ""))
             invisible(balance)
         }
         else if (request$valid == FALSE) {

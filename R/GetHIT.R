@@ -1,4 +1,6 @@
 GetHIT <-
+gethit <-
+hit <-
 function (hit, response.group = NULL, keypair = credentials(), 
     print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE, 
     return.hit.dataframe = TRUE, return.qual.dataframe = TRUE) 
