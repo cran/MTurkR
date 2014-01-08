@@ -1,40 +1,49 @@
 GetQualificationType <-
 qualtype <-
-function (qual, keypair = credentials(), print = TRUE, browser = FALSE, 
-    log.requests = TRUE, sandbox = FALSE, return.qual.dataframe = TRUE) 
-{
-    if (!is.null(keypair)) {
+function (qual, keypair = credentials(), print = getOption('MTurkR.print'),
+    browser = getOption('MTurkR.browser'), log.requests = getOption('MTurkR.log'),
+    sandbox = getOption('MTurkR.sandbox'), return.qual.dataframe = TRUE,
+    validation.test = getOption('MTurkR.test')) {
+    if(!is.null(keypair)) {
         keyid <- keypair[1]
         secret <- keypair[2]
     }
-    else stop("No keypair provided or 'credentials' object not stored")
+    else
+        stop("No keypair provided or 'credentials' object not stored")
     operation <- "GetQualificationType"
-    if (is.null(qual)) 
+    if(is.null(qual)) 
         stop("Must specify QualificationTypeId")
-    else GETparameters <- paste("&QualificationTypeId=", qual, 
-        sep = "")
+    else {
+		if(is.factor(qual))
+            qual <- as.character(qual)
+        GETparameters <- paste("&QualificationTypeId=", qual, sep = "")
+    }
     auth <- authenticate(operation, secret)
-    if (browser == TRUE) {
+    if(browser == TRUE) {
         request <- request(keyid, auth$operation, auth$signature, 
             auth$timestamp, GETparameters, browser = browser, 
-            sandbox = sandbox)
+            sandbox = sandbox, validation.test = validation.test)
+		if(validation.test)
+			invisible(request)
     }
     else {
         request <- request(keyid, auth$operation, auth$signature, 
             auth$timestamp, GETparameters, log.requests = log.requests, 
-            sandbox = sandbox)
-        if (request$valid == TRUE) {
+            sandbox = sandbox, validation.test = validation.test)
+		if(validation.test)
+			invisible(request)
+        if(request$valid == TRUE) {
             Qualifications <- QualificationTypesToDataFrame(xml = request$xml)
-            if (print == TRUE) 
-                cat("QualificationType Retrieved: ", qual, "\n", 
-                  sep = "")
+            if(print == TRUE) 
+                message("QualificationType Retrieved: ", qual)
         }
-        else if (request$valid == FALSE) {
-            if (print == TRUE) 
-                cat("Invalid Request\n")
+        else if(request$valid == FALSE) {
+            if(print == TRUE) 
+                warning("Invalid Request")
         }
     }
-    if (print == TRUE) 
+    if(print == TRUE) 
         return(Qualifications)
-    else invisible(Qualifications)
+    else
+		invisible(Qualifications)
 }

@@ -6,8 +6,11 @@
 \description{Revoke a Qualification from a worker or multiple workers. This deletes their qualification score and any record thereof.}
 \usage{
 RevokeQualification(qual, worker, reason = NULL, 
-					keypair = credentials(), print = TRUE, browser = FALSE, 
-					log.requests = TRUE, sandbox = FALSE)
+                    keypair = credentials(), print = getOption('MTurkR.print'),
+                    browser = getOption('MTurkR.browser'), 
+                    log.requests = getOption('MTurkR.log'),
+                    sandbox = getOption('MTurkR.sandbox'),
+                    validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{qual}{A character string containing a QualificationTypeId.}
@@ -18,6 +21,7 @@ RevokeQualification(qual, worker, reason = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{
 A simple function to revoke a Qualification assigned to one or more workers.

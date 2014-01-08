@@ -5,12 +5,15 @@
 \description{Create a QualificationType. This creates a QualificationType, but does not assign it to any workers. All characteristics of the QualificationType (except name and keywords) can be changed later with \code{\link{UpdateQualificationType}}.}
 \usage{
 CreateQualificationType(name, description, status, keywords = NULL, 
-						retry.delay = NULL, test = NULL, answerkey = NULL, 
-						test.duration = NULL,
-						validate.test = FALSE, validate.answerkey = FALSE,
-						auto = NULL, auto.value = NULL, 
-						keypair = credentials(), print = TRUE, browser = FALSE, 
-						log.requests = TRUE, sandbox = FALSE)
+                        retry.delay = NULL, test = NULL, answerkey = NULL, 
+                        test.duration = NULL,
+                        validate.test = FALSE, validate.answerkey = FALSE,
+                        auto = NULL, auto.value = NULL, keypair = credentials(),
+                        print = getOption('MTurkR.print'),
+                        browser = getOption('MTurkR.browser'),
+                        log.requests = getOption('MTurkR.log'),
+                        sandbox = getOption('MTurkR.sandbox'),
+                        validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{name}{A name for the QualificationType. This is visible to workers. It cannot be modified by \code{\link{UpdateQualificationType}}.}
@@ -30,6 +33,7 @@ CreateQualificationType(name, description, status, keywords = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{
 A function to create a QualificationType. Active QualificationTypes are visible to workers and to other requesters. All characteristics of the QualificationType, other than the name and keywords, can later be modified by \code{\link{UpdateQualificationType}}. Qualifications can then be used to assign Qualifications to workers with \code{\link{AssignQualification}} and invoked as QualificationRequirements in \code{\link{RegisterHITType}} and/or \code{\link{CreateHIT}} operations.
@@ -56,8 +60,8 @@ Note that when \code{browser=TRUE}, specifying this operation with \code{test} (
 \examples{
 \dontrun{
 qual1 <- CreateQualificationType(name="Worked for me before",
-		description="This qualification is for people who have worked for me before",
-		keywords="Worked for me before",sandbox=TRUE)
+        description="This qualification is for people who have worked for me before",
+        keywords="Worked for me before",sandbox=TRUE)
 qual1
 }
 }

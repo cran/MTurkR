@@ -1,17 +1,23 @@
 UnblockWorker <-
 UnblockWorkers <-
 unblock <-
-function (workers, reasons = NULL, keypair = credentials(), print = TRUE, 
-    browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
+function (workers, reasons = NULL, keypair = credentials(), print = getOption('MTurkR.print'), 
+    browser = getOption('MTurkR.browser'), log.requests = getOption('MTurkR.log'),
+    sandbox = getOption('MTurkR.sandbox'), validation.test = getOption('MTurkR.test')) 
 {
     if (!is.null(keypair)) {
         keyid <- keypair[1]
         secret <- keypair[2]
     }
-    else stop("No keypair provided or 'credentials' object not stored")
+    else
+		stop("No keypair provided or 'credentials' object not stored")
     operation <- "UnblockWorker"
+    if(is.factor(workers))
+        workers <- as.character(workers)
     if (length(workers) > 1) {
         if (!is.null(reasons)) {
+            if(is.factor(reasons))
+                reasons <- as.character(reasons)
             if (length(reasons) == 1) 
                 reasons <- rep(reasons, length(workers))
             else if (!length(workers) == length(reasons)) 
@@ -29,16 +35,19 @@ function (workers, reasons = NULL, keypair = credentials(), print = TRUE,
         if (browser == TRUE) {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, browser = browser, 
-                sandbox = sandbox)
+                sandbox = sandbox, validation.test = validation.test)
+			if(validation.test)
+				invisible(request)
         }
         else {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, log.requests = log.requests, 
-                sandbox = sandbox)
-            if (request$valid == TRUE) {
+                sandbox = sandbox, validation.test = validation.test)
+            if(validation.test)
+				invisible(request)
+			if (request$valid == TRUE) {
                 if (print == TRUE) 
-                  cat(i, ": Worker ", workers[i], " Unblocked\n", 
-                    sep = "")
+                  message(i, ": Worker ", workers[i], " Unblocked")
                 if (is.null(reasons)) 
                   Workers[i, ] = c(workers[i], NA, request$valid)
                 else Workers[i, ] = c(workers[i], reasons[i], 
@@ -46,12 +55,12 @@ function (workers, reasons = NULL, keypair = credentials(), print = TRUE,
             }
             else if (request$valid == FALSE) {
                 if (print == TRUE) 
-                  cat(i, ": Invalid Request for worker ", workers[i], 
-                    "\n", sep = "")
+                  warning(i, ": Invalid Request for worker ", workers[i])
             }
         }
     }
     if (print == TRUE) 
         return(Workers)
-    else invisible(Workers)
+    else
+		invisible(Workers)
 }

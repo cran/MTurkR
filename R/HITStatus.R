@@ -1,42 +1,54 @@
 HITStatus <-
 status <-
 function (hit = NULL, hit.type = NULL, keypair = credentials(), 
-    print = TRUE, log.requests = TRUE, sandbox = FALSE) 
-{
-    if ((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & 
-        !is.null(hit.type))) 
+    print = getOption('MTurkR.print'), log.requests = getOption('MTurkR.log'),
+    sandbox = getOption('MTurkR.sandbox')){
+    if((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & !is.null(hit.type))) 
         stop("Must provide 'hit' xor 'hit.type'")
-    hitsearch <- SearchHITs(keypair = keypair, print = FALSE, 
-        log.requests = log.requests, sandbox = sandbox, return.qual.dataframe = FALSE)
+    hitsearch <- SearchHITs(keypair = keypair, print = TRUE, 
+                            log.requests = log.requests, sandbox = sandbox,
+                            return.qual.dataframe = FALSE)
     HITs <- hitsearch$HITs
-    if (!is.null(hit)) {
+    if(is.null(HITs))
+        return(HITs) # return if NULL
+    if(!is.null(hit)){
+        if(is.factor(hit))
+            hit <- as.character(hit)
         HITs <- HITs[grep(hit, HITs$HITId), ]
+        toprint <- HITs[, c("HITId", "HITReviewStatus", "NumberOfAssignmentsPending", 
+                            "NumberOfAssignmentsAvailable",
+                            "NumberOfAssignmentsCompleted", "Expiration")]
+        names(toprint) <- c("HITId", "Review Status", "Assignments Pending", 
+                            "Assignments Available", "Assignments Completed",
+                            "Expiration")
     }
-    else if (!is.null(hit.type)) {
-        HITs <- HITs[HITs$HITTypeId == hit.type, ]
-        if (dim(HITs)[1] == 0) 
-            stop("No HITs found for HITType")
-        if (dim(HITs)[1] > 1) {
-            i <- dim(HITs)[1]
-            HITs$HITId[i + 1] <- "------------------------------"
-            HITs$NumberofAssignmentsPending[i + 1] <- "--------------------"
-            HITs$NumberofAssignmentsAvailable[i + 1] <- "------------------"
-            HITs$NumberofAssignmentsCompleted[i + 1] <- "--------------------"
-            HITs$HITId[i + 2] <- "Totals"
-            HITs$NumberofAssignmentsPending[i + 2] <- sum(as.numeric(HITs$NumberofAssignmentsAvailable[1:i]))
-            HITs$NumberofAssignmentsAvailable[i + 2] <- sum(as.numeric(HITs$NumberofAssignmentsPending[1:i]))
-            HITs$NumberofAssignmentsCompleted[i + 2] <- sum(as.numeric(HITs$NumberofAssignmentsCompleted[1:i]))
+    else if(!is.null(hit.type)) {
+        if(is.factor(hit.type))
+            hit <- as.character(hit.type)
+        HITs <- HITs[HITs$HITTypeId %in% hit.type, ]
+        if(dim(HITs)[1] == 0) {
+            message("No HITs found for HITType")
+            invisible(HITs)
+        }
+        if(dim(HITs)[1] > 1) {
+            toprint <- HITs[,c( "HITId","HITReviewStatus","NumberOfAssignmentsPending",
+                                "NumberOfAssignmentsAvailable",
+                                "NumberOfAssignmentsCompleted", "Expiration")]
+            totals <- data.frame(HITId = c( "------------------------------", "Totals"),
+                                HITReviewStatus = c("---------------",""),
+                                NumberOfAssignmentsPending = c("--------------------",
+                                    sum(as.numeric(HITs$NumberOfAssignmentsPending))),
+                                NumberOfAssignmentsAvailable = c("------------------",
+                                    sum(as.numeric(HITs$NumberOfAssignmentsAvailable))),
+                                NumberOfAssignmentsCompleted = c("--------------------",
+                                    sum(as.numeric(HITs$NumberOfAssignmentsCompleted))),
+                                Expiration = c("----------",""))
+            toprint <- rbind(toprint,totals)
         }
     }
-    if (print == TRUE) {
-        toprint <- HITs[, c("HITId", "HITReviewStatus", "NumberofAssignmentsPending", 
-            "NumberofAssignmentsAvailable", "NumberofAssignmentsCompleted", 
-            "Expiration")]
-        names(toprint) <- c("HITId", "Review Status", "Assignments Pending", 
-            "Assignments Available", "Assignments Completed", 
-            "Expiration")
+    if(print == TRUE){
         print(toprint, row.names = FALSE)
-        cat("\n")
+        message()
     }
     invisible(HITs)
 }

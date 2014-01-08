@@ -5,9 +5,12 @@
 \description{Register a HITType on MTurk, in order to create one or more HITs to show up as a group to workers.}
 \usage{
 RegisterHITType(title, description, reward, duration, keywords = NULL, 
-				auto.approval.delay = NULL, qual.req = NULL, 
-				keypair = credentials(), print = TRUE, browser = FALSE, 
-				log.requests = TRUE, sandbox = FALSE)
+                auto.approval.delay = NULL, qual.req = NULL, 
+                keypair = credentials(), print = getOption('MTurkR.print'),
+                browser = getOption('MTurkR.browser'), 
+                log.requests = getOption('MTurkR.log'),
+                sandbox = getOption('MTurkR.sandbox'),
+                validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{title}{A character string containing the title for the HITType. All HITs of this HITType will be visibly grouped to workers according to this title. Maximum of 128 characters.}
@@ -22,6 +25,7 @@ RegisterHITType(title, description, reward, duration, keywords = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{All HITs of a given HITType are visibly grouped together for workers and share common properties (e.g., reward amount, QualificationRequirements). This function registers a HITType in the MTurk system, which can then be used when creating individual HITs. If a requester wants to change these properties for a specific HIT, the HIT should be changed to a new HITType (see \code{\link{ChangeHITType}}).
 
@@ -42,7 +46,12 @@ RegisterHITType(title, description, reward, duration, keywords = NULL,
 }
 \examples{
 \dontrun{
-RegisterHITType(title="10 Question Survey", description="Complete a 10-question survey about news coverage and your opinions", reward=".20", duration=seconds(hours=1), keywords="survey, questionnaire, politics")
+RegisterHITType(title="10 Question Survey",
+                description=
+                "Complete a 10-question survey about news coverage and your opinions",
+                reward=".20", 
+                duration=seconds(hours=1), 
+                keywords="survey, questionnaire, politics")
 }
 }
 \keyword{HITs}

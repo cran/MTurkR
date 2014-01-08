@@ -1,5 +1,2 @@
-APIReference <-
-function () 
-{
-    shell.exec("http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html")
-}
+APIReference <- function()
+    browseURL("http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html")
