@@ -2,67 +2,76 @@ approve <-
 ApproveAssignment <-
 ApproveAssignments <-
 function (assignments, feedback = NULL, rejected = FALSE, keypair = credentials(), 
-    print = FALSE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
-{
-    if (!is.null(keypair)) {
+    print = getOption('MTurkR.print'), browser = getOption('MTurkR.browser'),
+    log.requests = getOption('MTurkR.log'), sandbox = getOption('MTurkR.sandbox'),
+	validation.test = getOption('MTurkR.test')) {
+    if(!is.null(keypair)) {
         keyid <- keypair[1]
         secret <- keypair[2]
     }
-    else stop("No keypair provided or 'credentials' object not stored")
-    if (rejected == TRUE) 
+    else
+        stop("No keypair provided or 'credentials' object not stored")
+    if(is.factor(assignments))
+        assignments <- as.character(assignments)
+    if(rejected == TRUE) 
         operation <- "ApproveRejectedAssignment"
-    else operation <- "ApproveAssignment"
-    if (!is.null(feedback)) {
-        for (i in 1:length(feedback)) {
-            if (!is.null(feedback[i]) && nchar(curlEscape(feedback[i])) > 
-                1024) 
+    else
+        operation <- "ApproveAssignment"
+    if(!is.null(feedback)) {
+        if(is.factor(feedback))
+            feedback <- as.character(feedback)
+        for(i in 1:length(feedback)) {
+            if (!is.null(feedback[i]) && nchar(curlEscape(feedback[i])) > 1024) 
                 warning("Feedback ", i, " is too long (1024 char max)")
         }
-        if (length(feedback) == 1) 
+        if(length(feedback) == 1) 
             feedback <- rep(feedback[1], length(assignments))
-        else if (!length(feedback) == length(assignments)) 
-            stop("Number of feedback is not 1 nor length(assignmetns)")
+        else if(!length(feedback) == length(assignments)) 
+            stop("Number of feedback is not 1 nor length(assignments)")
     }
     batch <- function(assignment, feedback.batch = NULL) {
-        GETparameters <- paste("&AssignmentId=", assignment, 
-            sep = "")
+        GETparameters <- paste("&AssignmentId=", assignment, sep = "")
         if (!is.null(feedback.batch)) {
             GETparameters <- paste(GETparameters, "&RequesterFeedback=", 
                 curlEscape(feedback.batch), sep = "")
         }
         auth <- authenticate(operation, secret)
-        if (browser == TRUE) {
+        if(browser == TRUE) {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, browser = browser, 
-                sandbox = sandbox)
+                sandbox = sandbox, validation.test = validation.test)
+			if(validation.test)
+				invisible(request)
         }
         else {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETparameters, log.requests = log.requests, 
-                sandbox = sandbox)
-            if (print == TRUE) {
+                sandbox = sandbox, validation.test = validation.test)
+			if(validation.test)
+				invisible(request)
+            if(print == TRUE) {
                 if (request$valid == TRUE) 
-                  cat("Assignment ", assignment, " Approved\n", 
-                    sep = "")
+					message("Assignment ", assignment, " Approved", sep = "")
                 else if (request$valid == FALSE) 
-                  cat("Invalid Request for ", assignment, "\n", 
-                    sep = "")
+					warning("Invalid Request for ", assignment)
                 return(request)
             }
-            else invisible(request)
+            else
+                invisible(request)
         }
     }
-    Assignments <- data.frame(matrix(nrow = length(assignments), 
-        ncol = 3))
-    names(Assignments) <- c("AssignmentId", "Feedback", "Valid")
-    for (i in 1:length(assignments)) {
+    Assignments <- setNames(data.frame(matrix(nrow=length(assignments), ncol=3)),
+                    c("AssignmentId", "Feedback", "Valid"))
+    for(i in 1:length(assignments)) {
         x <- batch(assignments[i], feedback[i])
+		if(validation.test)
+			invisible(x)
         if (!is.null(feedback)) 
-            Assignments[i, ] <- c(assignments[i], feedback[i], 
-                x$valid)
-        else Assignments[i, ] <- c(assignments[i], "", x$valid)
+            Assignments[i, ] <- c(assignments[i], feedback[i], x$valid)
+        else
+            Assignments[i, ] <- c(assignments[i], "", x$valid)
     }
-    if (print == TRUE) 
-        cat(sum(x$valid), " Assignments Approved\n", sep = "")
+    if(print == TRUE) 
+        message(sum(x$valid), " Assignments Approved")
     invisible(Assignments)
 }

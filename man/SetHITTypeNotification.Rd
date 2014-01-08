@@ -4,9 +4,12 @@
 \title{Configure a HITType Notification}
 \description{Configure a notification to be sent when specific actions occur for the specified HITType.}
 \usage{
-SetHITTypeNotification(	hit.type, notification = NULL, active = NULL, 
-						keypair = credentials(), print = TRUE, browser = FALSE, 
-						log.requests = TRUE, sandbox = FALSE)
+SetHITTypeNotification(    hit.type, notification = NULL, active = NULL, 
+                        keypair = credentials(), print = getOption('MTurkR.print'),
+                        browser = getOption('MTurkR.browser'), 
+                        log.requests = getOption('MTurkR.log'),
+                        sandbox = getOption('MTurkR.sandbox'),
+                        validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{hit.type}{A character string specifying the HITTypeId of the HITType for which notifications are being configured.}
@@ -17,6 +20,7 @@ SetHITTypeNotification(	hit.type, notification = NULL, active = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{
 Configure a notification to be sent to the requester whenever an event (specified in the \code{Notification} object) occurs. This is useful for receiving email notifications about, for example, when assignments are submitted or HITs are completed.

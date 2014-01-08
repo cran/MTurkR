@@ -4,11 +4,13 @@
 \title{Get Reviewable HITs}
 \description{Get HITs that are currently reviewable.}
 \usage{
-GetReviewableHITs(	hit.type = NULL, status = NULL, response.group = "Minimal", 
-					return.all = TRUE, pagenumber = "1", pagesize = "10", 
-					sortproperty = "Enumeration", sortdirection = "Ascending", 
-					keypair = credentials(), print = TRUE, 
-					log.requests = TRUE, sandbox = FALSE)
+GetReviewableHITs(    hit.type = NULL, status = NULL, response.group = "Minimal", 
+                    return.all = TRUE, pagenumber = "1", pagesize = "10", 
+                    sortproperty = "Enumeration", sortdirection = "Ascending", 
+                    keypair = credentials(), print = getOption('MTurkR.print'), 
+                    log.requests = getOption('MTurkR.log'),
+                    sandbox = getOption('MTurkR.sandbox'),
+                    validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{hit.type}{An optional character string containing a HITTypeId to consider when looking for reviewable HITs.}
@@ -23,6 +25,7 @@ GetReviewableHITs(	hit.type = NULL, status = NULL, response.group = "Minimal",
   \item{print}{Optionally print the results of the API request to the standard output. Default is \code{TRUE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{A simple function to return the HITIds of HITs currently in \dQuote{Reviewable} or \dQuote{Reviewing} status. To retrieve additional details about each of these HITs, see \code{\link{GetHIT}}. This is an alternative to \code{\link{SearchHITs}}.
 

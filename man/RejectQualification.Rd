@@ -6,8 +6,11 @@
 \description{Reject a Worker's request for a Qualification.}
 \usage{
 RejectQualification(qual.request, reason = NULL, 
-					keypair = credentials(), print = TRUE, browser = FALSE, 
-					log.requests = TRUE, sandbox = FALSE)
+                    keypair = credentials(), print = getOption('MTurkR.print'),
+                    browser = getOption('MTurkR.browser'), 
+                    log.requests = getOption('MTurkR.log'),
+                    sandbox = getOption('MTurkR.sandbox'),
+                    validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{qual.request}{A character string containing a QualificationRequestId, or a vector of character strings containing multiple QualificationRequestIds (e.g., as returned by \code{\link{GetQualificationRequests}}).}
@@ -17,6 +20,7 @@ RejectQualification(qual.request, reason = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{Qualifications are publicly visible to workers on the MTurk website and workers can request Qualifications (e.g., when a HIT requires a QualificationType that they have not been assigned). QualificationRequests can be retrieved via \code{\link{GetQualificationRequests}}. This function rejects specified qualification requests.
 
@@ -35,7 +39,8 @@ RejectQualification(qual.request, reason = NULL,
 }
 \examples{
 \dontrun{
-RejectQualification("2YCIA0RYNJ9262B1D82MPTUEXAMPLE",reason="I am not currently granting this QualificationType.")
+RejectQualification("2YCIA0RYNJ9262B1D82MPTUEXAMPLE",
+                    reason="I am not currently granting this QualificationType.")
 }
 }
 \keyword{Qualifications}

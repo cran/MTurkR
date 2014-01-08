@@ -1,51 +1,56 @@
 ExpireHIT <-
 expire <-
 function (hit = NULL, hit.type = NULL, keypair = credentials(), 
-    print = TRUE, browser = FALSE, log.requests = TRUE, sandbox = FALSE) 
-{
-    if (!is.null(keypair)) {
+    print = getOption('MTurkR.print'), browser = getOption('MTurkR.browser'),
+    log.requests = getOption('MTurkR.log'), sandbox = getOption('MTurkR.sandbox'),
+    validation.test = getOption('MTurkR.test')) {
+    if(!is.null(keypair)) {
         keyid <- keypair[1]
         secret <- keypair[2]
     }
-    else stop("No keypair provided or 'credentials' object not stored")
+    else
+        stop("No keypair provided or 'credentials' object not stored")
     operation <- "ForceExpireHIT"
-    if ((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & 
-        !is.null(hit.type))) 
+    if((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & !is.null(hit.type))) 
         stop("Must provide 'hit' xor 'hit.type'")
-    else if (!is.null(hit)) {
+    else if(!is.null(hit)){
+        if(is.factor(hit))
+            hit <- as.character(hit)
         hitlist <- hit
     }
-    else if (!is.null(hit.type)) {
+    else if(!is.null(hit.type)) {
+        if(is.factor(hit.type))
+            hit.type <- as.character(hit.type)
         hitsearch <- SearchHITs(keypair = keypair, print = FALSE, 
             log.requests = log.requests, sandbox = sandbox, return.qual.dataframe = FALSE)
-        hitlist <- hitsearch$HITs[hitsearch$HITs$HITTypeId == 
-            hit.type, ]$HITId
-        if (length(hitlist) == 0) 
+        hitlist <- hitsearch$HITs$HITId[hitsearch$HITs$HITTypeId %in% hit.type]
+        if(length(hitlist) == 0) 
             stop("No HITs found for HITType")
     }
-    HITs <- data.frame(matrix(ncol = 2))
-    names(HITs) <- c("HITId", "Valid")
-    for (i in 1:length(hitlist)) {
+    HITs <- setNames(data.frame(matrix(ncol=2, nrow=length(hitlist))), c("HITId", "Valid"))
+    for(i in 1:length(hitlist)) {
         GETiteration <- paste("&HITId=", hitlist[i], sep = "")
         auth <- authenticate(operation, secret)
-        if (browser == TRUE) {
+        if(browser == TRUE) {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETiteration, browser = browser, 
-                sandbox = sandbox)
+                sandbox = sandbox, validation.test = validation.test)
+			if(validation.test)
+				invisible(request)
         }
         else {
             request <- request(keyid, auth$operation, auth$signature, 
                 auth$timestamp, GETiteration, log.requests = log.requests, 
-                sandbox = sandbox)
-            HITs[i, ] = c(hitlist[i], request$valid)
-            if (request$valid == TRUE) {
-                if (print == TRUE) 
-                  cat(i, ": HIT ", hitlist[i], " Expired\n", 
-                    sep = "")
+                sandbox = sandbox, validation.test = validation.test)
+			if(validation.test)
+				invisible(request)
+            HITs[i, ] <- c(hitlist[i], request$valid)
+            if(request$valid == TRUE) {
+                if(print == TRUE) 
+					message(i, ": HIT ", hitlist[i], " Expired")
             }
-            else if (request$valid == FALSE & print == TRUE) 
-                cat(i, ": Invalid Request for HIT ", hitlist[i], 
-                  "\n", sep = "")
+            else if(request$valid == FALSE & print == TRUE) 
+                warning(i, ": Invalid Request for HIT ", hitlist[i])
         }
     }
     return(HITs)

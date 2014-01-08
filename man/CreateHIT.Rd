@@ -5,15 +5,20 @@
 \title{Create HIT}
 \description{Create a HIT. This is the most important function in the package. It creates a HIT based upon the specified parameters: (1) characteristics inherited from a HITType or specification of those parameters and (2) some kind of Question data structure.}
 \usage{
-CreateHIT(	hit.type = NULL, question = NULL, validate.question = FALSE,
-			expiration, assignments = "1", 
-			assignment.review.policy = NULL, hit.review.policy = NULL, 
-			annotation = NULL, unique.request.token = NULL, 
-			title = NULL, description = NULL, reward = NULL, duration = NULL, keywords = NULL, 
-			auto.approval.delay = NULL, qual.req = NULL, 
-			hitlayoutid = NULL, hitlayoutparameters = NULL, 
-			response.group = NULL, keypair = credentials(), print = TRUE, 
-			browser = FALSE, log.requests = TRUE, sandbox = FALSE)
+CreateHIT(hit.type = NULL, question = NULL, validate.question = FALSE,
+          expiration, assignments = "1", 
+          assignment.review.policy = NULL, hit.review.policy = NULL, 
+          annotation = NULL, unique.request.token = NULL, 
+          title = NULL, description = NULL, reward = NULL, duration = NULL,
+          keywords = NULL, 
+          auto.approval.delay = NULL, qual.req = NULL, 
+          hitlayoutid = NULL, hitlayoutparameters = NULL, 
+          response.group = NULL, keypair = credentials(),
+          print = getOption('MTurkR.print'), 
+          browser = getOption('MTurkR.browser'),
+          log.requests = getOption('MTurkR.log'),
+          sandbox = getOption('MTurkR.sandbox'),
+          validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{hit.type}{An optional character string specifying the HITTypeId that this HIT should be visibly grouped with (and whose properties, e.g. reward amount, this HIT should inherit).}
@@ -40,6 +45,7 @@ CreateHIT(	hit.type = NULL, question = NULL, validate.question = FALSE,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{This function creates a new HIT and makes it available to workers. Characteristics of the HIT can either be specified by including a valid HITTypeId for \dQuote{hit.type} or creating a new HITType by atomically specifying the characteristics of a new HITType.
 
@@ -68,14 +74,18 @@ When creating a ExternalQuestion HITs, the \code{\link{GenerateHITsFromTemplate}
 \dontrun{
 a <- GenerateLayoutParameter("message","Text to display in HIT")
 CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW",
-hitlayoutid="23ZGOOGQSCM61T1H5H9U0U00OQWFFU", 
-hitlayoutparameters=a)
+          hitlayoutid="23ZGOOGQSCM61T1H5H9U0U00OQWFFU", 
+          hitlayoutparameters=a)
 
 b <- GenerateExternalQuestion("http://www.example.com/myhit.html","400")
 CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", question=b$string)
 
-CreateHIT(title="Survey",description="5 question survey",reward=".10",
-duration=seconds(days=4),keywords="survey, questionnaire", question=b$string)
+CreateHIT(title="Survey",
+          description="5 question survey",
+          reward=".10",
+          duration=seconds(days=4),
+          keywords="survey, questionnaire",
+          question=b$string)
 }
 }
 \keyword{HITs}

@@ -5,10 +5,13 @@
 \description{Update characteristics of a QualificationType.}
 \usage{
 UpdateQualificationType(qual, description = NULL, status = NULL, 
-						retry.delay = NULL, test = NULL, answerkey = NULL, 
-						test.duration = NULL, auto = NULL, auto.value = NULL, 
-						keypair = credentials(), print = TRUE, browser = FALSE, 
-						log.requests = TRUE, sandbox = FALSE)
+                        retry.delay = NULL, test = NULL, answerkey = NULL, 
+                        test.duration = NULL, auto = NULL, auto.value = NULL, 
+                        keypair = credentials(), print = getOption('MTurkR.print'),
+                        browser = getOption('MTurkR.browser'),
+                        log.requests = getOption('MTurkR.log'),
+                        sandbox = getOption('MTurkR.sandbox'),
+                        validation.test = getOption('MTurkR.test'))
 }
 \arguments{
   \item{qual}{A character string containing a QualificationTypeId.}
@@ -25,6 +28,7 @@ UpdateQualificationType(qual, description = NULL, status = NULL,
   \item{browser}{Optionally open the request in the default web browser, rather than opening in R. Default is \code{FALSE}.}
   \item{log.requests}{A logical specifying whether API requests should be logged. Default is \code{TRUE}. See \code{\link{readlogfile}} for details.}
   \item{sandbox}{Optionally execute the request in the MTurk sandbox rather than the live server.  Default is \code{FALSE}.}
+  \item{validation.test}{A logical specifying whether only the pre-request checks should be conducted and the request URL returned (without executing the request). Default is \code{FALSE}.}
 }
 \details{
 A function to update the characteristics of a QualificationType. Name and keywords cannot be modified after a QualificationType is created.
@@ -48,8 +52,12 @@ A function to update the characteristics of a QualificationType. Name and keywor
 }
 \examples{
 \dontrun{
-qual1 <- CreateQualificationType(title="Worked for me before",description="This qualification is for people who have worked for me before",keywords="Worked for me before",sandbox=TRUE)
-qual2 <- UpdateQualificationType(qual.test,description="This qualification is for everybody!",auto=TRUE,auto.value="5",sandbox=TRUE)
+qual1 <- CreateQualificationType(title="Worked for me before",
+            description="This qualification is for people who have worked for me before",
+            keywords="Worked for me before",sandbox=TRUE)
+qual2 <- UpdateQualificationType(qual.test,
+            description="This qualification is for everybody!",
+            auto=TRUE, auto.value="5", sandbox=TRUE)
 }
 }
 \keyword{Qualifications}
