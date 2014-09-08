@@ -1,26 +1,40 @@
-# Access the MTurk Requester API via R #
+# R Client for the MTurk Requester API #
+
+**MTurkR** provides programmatic access to the crowdsourcing functionality of the [Amazon Mechanical Turk](https://requester.mturk.com/) (MTurk) [Requester API](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html).
+
+Possible applications of the package include:
+ * Survey or experimental research using MTurk workers as human subjects
+ * Large-scale human coding or categorization of text, images, video, audio, or other files
+ * Collection of unstructured data from the web
+ * Audio and video transcription
+ * Preprocessing of "messy" data prior to statistical procedures
+
+
+---
+## Installation ##
 
 [![Build Status](https://travis-ci.org/leeper/MTurkR.png?branch=master)](https://travis-ci.org/leeper/MTurkR)
 
-The **MTurkR** package provides access to the [Amazon Mechanical Turk](https://requester.mturk.com/) (MTurk) [Requester API](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html) via authenticated HTTP requests executed with [RCurl](http://cran.r-project.org/web/packages/RCurl/index.html) and a number of functions to translate API calls into R data structures (using the [XML package](http://cran.r-project.org/web/packages/XML/index.html)).
+To install the latest development version of **MTurkR** from GitHub:
 
-Read more about the package:
-* [On CRAN](http://cran.r-project.org/web/packages/MTurkR/index.html)
-* [On the MTurkR website](http://leeper.github.io/MTurkR)
+    if(!require("devtools")){
+        install.packages("devtools")
+        library("devtools")
+    }
+    install_github("leeper/MTurkR")
 
----
-## Install latest version ##
+The GitHub [master branch](https://github.com/leeper/MTurkR) should be considered stable, while [the develop branch](https://github.com/leeper/MTurkR/tree/develop) reflects current code that is a work in progress. Major releases are periodically pushed to CRAN. To install the latest version from CRAN, simply use:
 
-To install the latest development version from GitHub:
+    install.packages("MTurkR")
 
-    # install.packages("devtools")
-    library(devtools)
-    install_github(repo="MTurkR", username = "leeper")
 
----
-## Some code examples ##
-* Examples in an introductory article: "[Crowdsourcing with R and the MTurk API](http://polmeth.wustl.edu/methodologist/tpm_v20_n2.pdf)" in *The Political Methodologist* 20(1):2-7.
-* Examples from a blog post by Solomon Messing: "[Streamline Your Mechanical Turk Workflow with MTurkR](http://solomonmessing.wordpress.com/2013/06/24/streamline-your-mechanical-turk-workflow-with-mturkr/)
-* Sample code to [create and manage qualifications](http://leeper.github.io/MTurkR/qualification_test_example.r), with associated xml files for [QuestionForm](http://leeper.github.io/MTurkR/questionform_example.xml) and [AnswerKey](http://leeper.github.io/MTurkR/answerkey_example.xml)
-* Workflow and sample code to [mimick the Requester UI's display of input HITLayout parameters with assignment results](https://github.com/leeper/MTurkR/blob/gh-pages/batchinputs.md).
-* [Access your Turkopticon requester ratings from R](https://github.com/leeper/MTurkR/blob/gh-pages/turkopticon.md).
+## Using **MTurkR** ##
+
+The MTurkR documentation files contain minimal examples for all functions. Further examples of how to use MTurkR are provided in [the MTurkR GitHub wiki](https://github.com/leeper/MTurkR/wiki). Users can contribute their own examples or further documentation there, or via pull requests to the GitHub repository.
+
+If you experience problems using MTurkR, you can:
+  
+  - [Report issues on Github](https://github.com/leeper/MTurkR/issues)
+  - Check the status of the MTurk Requester API on the [AWS Service Health Dashboard](http://status.aws.amazon.com/)
+  - Contact the package maintainer [via email](mailto:thosjleeper@gmail.com) or on [Twitter](https://twitter.com/thosjleeper)
+

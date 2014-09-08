@@ -1,13 +1,13 @@
 wizard.simple <-
-function (graphics = FALSE, sandbox = NULL) 
+function (graphics = FALSE, sandbox = NULL, ...) 
 {
     message("MTurkR Wizard loading...\n")
     log.requests <- TRUE
-    internet.test <- try(getURL("http://www.example.com"), silent = TRUE)
+    internet.test <- try(curlPerform(url="http://www.example.com"), silent = TRUE)
     if (class(internet.test) == "try-error") {
         message("An internet connection does not appear to be available!\n")
     }
-    keypair <- credentials()
+    keypair <- getOption('MTurkR.keypair')
     if (is.null(keypair)) {
         message("Retrieve your AWS access keys from https://aws-portal.amazon.com/gp/aws/securityCredentials")
         accesskey <- readline(prompt = "AWS/MTurk Access Key ID: ")
@@ -24,7 +24,7 @@ function (graphics = FALSE, sandbox = NULL)
         "1", TRUE)) 
         sandbox <- TRUE
     else
-		sandbox <- FALSE
+        sandbox <- FALSE
     wizard.menu <- function() {
         menu.opts <- c("Check Account Balance", "Check Sufficient Funds", 
             "Create HIT", "Check HIT Status", "Get Assignment(s)", 
@@ -39,9 +39,7 @@ function (graphics = FALSE, sandbox = NULL)
         if (choice == 0) 
             choice <- 20
         else if (choice == 1) {
-            balance <- try(AccountBalance(keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+            balance <- try(AccountBalance(verbose = TRUE, ...), silent = TRUE)
             if (class(balance) == "try-error") 
                 warning("An error occurred: ", balance)
             message()
@@ -52,9 +50,7 @@ function (graphics = FALSE, sandbox = NULL)
             hit <- readline("How many HITs do you plan to offer (usually 1): ")
             number <- readline("How many assignments per HIT: ")
             funds <- try(SufficientFunds(amount = pay, assignments = number, 
-                hits = hit, keypair = keypair, print = TRUE, 
-                log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+                         hits = hit, verbose = TRUE, ...), silent = TRUE)
             if (class(funds) == "try-error") 
                 warning("An error occurred: ", funds)
             message()
@@ -78,25 +74,24 @@ function (graphics = FALSE, sandbox = NULL)
             else if (question.type == 2) {
                 message("Enter URL for External HIT")
                 external.url <- readline(prompt = "URL: ")
-                question <- GenerateExternalQuestion(external.url, 
-                  400)
+                question <- GenerateExternalQuestion(external.url, 400)
             }
             quals <- menu(c("Yes", "No"), "Do you want to restrict the HIT with a QualificationRequirement?")
             if (quals == 1) {
                 qual.types <- as.data.frame(rbind(
-					c("Worker_PercentAssignmentsSubmitted", "00000000000000000000"),
-					c("Worker_PercentAssignmentsAbandoned", "00000000000000000070"),
-					c("Worker_PercentAssignmentsReturned", "000000000000000000E0"), 
-					c("Worker_PercentAssignmentsApproved", "000000000000000000L0"), 
-					c("Worker_PercentAssignmentsRejected", "000000000000000000S0"), 
-					c("Worker_NumberHITsApproved", "00000000000000000040"), 
-					c("Worker_Locale", "00000000000000000071"),
-					c("Worker_Adult", "00000000000000000060"), 
-					c("Categorization Masters (Sandbox)", "2F1KVCNHMVHV8E9PBUB2A4J79LU20F"),
-					c("Categorization Masters (Production)", "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"),
-					c("Photo Moderation Masters (Sandbox)", "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"),
-					c("Photo Moderation Masters (Production)", "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"),
-					c("Other", "")))
+                    c("Worker_PercentAssignmentsSubmitted", "00000000000000000000"),
+                    c("Worker_PercentAssignmentsAbandoned", "00000000000000000070"),
+                    c("Worker_PercentAssignmentsReturned", "000000000000000000E0"), 
+                    c("Worker_PercentAssignmentsApproved", "000000000000000000L0"), 
+                    c("Worker_PercentAssignmentsRejected", "000000000000000000S0"), 
+                    c("Worker_NumberHITsApproved", "00000000000000000040"), 
+                    c("Worker_Locale", "00000000000000000071"),
+                    c("Worker_Adult", "00000000000000000060"), 
+                    c("Categorization Masters (Sandbox)", "2F1KVCNHMVHV8E9PBUB2A4J79LU20F"),
+                    c("Categorization Masters (Production)", "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"),
+                    c("Photo Moderation Masters (Sandbox)", "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"),
+                    c("Photo Moderation Masters (Production)", "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"),
+                    c("Other", "")))
                 names(quals) <- c("Qualification", "QualificationTypeId")
                 qual.to.add <- menu(qual.types$Qualification, 
                   title = "Which QualificationRequirement would you like to add?")
@@ -107,25 +102,22 @@ function (graphics = FALSE, sandbox = NULL)
             else qualreqs <- NULL
             hit <- try(CreateHIT(title = title, description = description, 
                 reward = reward, duration = duration, keywords = keywords, 
-                qual.req = qualreqs, keypair = keypair, print = TRUE, 
-                log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+                qual.req = qualreqs, verbose = TRUE, ...), silent = TRUE)
             if (class(hit) == "try-error") 
                 warning("An error occurred: ", hit)
             else
-				print(hit)
+                print(hit)
             message()
             wizard.menu()
         }
         else if (choice == 4) {
             hittocheck <- readline(prompt = "HITId to Check: ")
-            status <- try(HITStatus(hit = hittocheck, keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
+            status <- try(HITStatus(hit = hittocheck, verbose = TRUE, ...), 
                 silent = TRUE)
             if (class(status) == "try-error") 
                 warning("An error occurred: ", status)
             else
-				print(status)
+                print(status)
             message()
             wizard.menu()
         }
@@ -136,18 +128,16 @@ function (graphics = FALSE, sandbox = NULL)
                 wizard.menu()
             else if (assign.or.hit == 1) {
                 id <- readline("Enter one AssignmentId: ")
-                assignment <- try(GetAssignment(assignment = id, 
-                  keypair = keypair, print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                assignment <- try(GetAssignment(assignment = id, verbose = TRUE, ...),
+                                  silent = TRUE)
                 if (class(assignment) == "try-error") 
                   warning("An error occurred: ", assignment)
                 else print(assignment)
             }
             else if (assign.or.hit == 2) {
                 id <- readline("Enter one HITId: ")
-                assignment <- try(GetAssignment(hit = id, keypair = keypair, 
-                  print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                assignment <- try(GetAssignment(hit = id, verbose = TRUE, ...),
+                                  silent = TRUE)
                 if (class(assignment) == "try-error") 
                   warning("An error occurred: ", assignment)
                 else print(assignment)
@@ -168,8 +158,7 @@ function (graphics = FALSE, sandbox = NULL)
             else if (action %in% c(2, 3)) 
                 addunits <- readline("How many assignments would you like to add? ")
             extend <- try(ExtendHIT(hit = hittocheck, add.assignments = addunits, 
-                add.seconds = addtime, keypair = keypair, print = TRUE, 
-                log.requests = log.requests, sandbox = sandbox), 
+                add.seconds = addtime, verbose = TRUE, ...), 
                 silent = TRUE)
             if (class(extend) == "try-error") 
                 warning("An error occurred: ", extend)
@@ -178,9 +167,8 @@ function (graphics = FALSE, sandbox = NULL)
         }
         else if (choice == 7) {
             hittoexpire <- readline(prompt = "HITId to Expire: ")
-            expire <- try(ExpireHIT(hit = hittoexpire, keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+            expire <- try(ExpireHIT(hit = hittoexpire, verbose = TRUE, ...), 
+                          silent = TRUE)
             if (class(expire) == "try-error") 
                 warning("An error occurred: ", expire)
             message()
@@ -199,12 +187,11 @@ function (graphics = FALSE, sandbox = NULL)
                 assignment <- scan(n = count, what = "character")
             }
             approve <- try(ApproveAssignment(assignments = assignment, 
-                keypair = keypair, print = TRUE, log.requests = log.requests, 
-                sandbox = sandbox), silent = TRUE)
+                                             verbose = TRUE, ...), silent = TRUE)
             if (class(approve) == "try-error") 
                 warning("An error occurred: ", approve)
             else
-				print(approve)
+                print(approve)
             message()
             wizard.menu()
         }
@@ -223,9 +210,8 @@ function (graphics = FALSE, sandbox = NULL)
                 message("Enter each AssignmentId on own line:")
                 assignment <- scan(n = count, what = "character")
             }
-            reject <- try(RejectAssignment(keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+            reject <- try(RejectAssignment(assignment, reason, verbose = TRUE, ...), 
+                          silent = TRUE)
             if (class(reject) == "try-error") 
                 warning("An error occurred: ", reject)
             else print(reject)
@@ -253,9 +239,8 @@ function (graphics = FALSE, sandbox = NULL)
                 assignment <- scan(n = count, what = "character")
             }
             bonus <- try(GrantBonus(workers = worker, assignments = assignment, 
-                amounts = amount, reasons = assignment, keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
-                silent = TRUE)
+                         amounts = amount, reasons = reason, verbose = TRUE, ...), 
+                         silent = TRUE)
             if (class(bonus) == "try-error") 
                 warning("An error occurred: ", bonus)
             else print(bonus)
@@ -279,14 +264,13 @@ function (graphics = FALSE, sandbox = NULL)
                 message("Enter each WorkerId on own line:")
                 worker <- scan(n = count, what = "character")
             }
-            notify <- try(ContactWorkers(subjects = subject, 
-                msgs = txt, workers = worker, keypair = keypair, 
-                print = FALSE, log.requests = log.requests, sandbox = sandbox), 
+            notify <- try(ContactWorkers(subjects = subject, msgs = txt,
+                                         workers = worker, verbose = FALSE, ...), 
                 silent = TRUE)
             if (class(notify) == "try-error") 
                 warning("An error occurred: ", notify)
             else
-				print(notify)
+                print(notify)
             message()
             wizard.menu()
         }
@@ -294,8 +278,7 @@ function (graphics = FALSE, sandbox = NULL)
             message("Which worker do you want to block?")
             workerid <- readline(prompt = "WorkerId: ")
             reason <- readline(prompt = "Reason for block: ")
-            block <- try(BlockWorker(workerid, reason, keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
+            block <- try(BlockWorker(workerid, reason, verbose = TRUE, ...), 
                 silent = TRUE)
             if (class(block) == "try-error") 
                 warning("An error occurred: ", block)
@@ -306,8 +289,7 @@ function (graphics = FALSE, sandbox = NULL)
             message("Which worker do you want to unblock?")
             workerid <- readline(prompt = "WorkerId: ")
             reason <- readline(prompt = "Reason for unblock: ")
-            unblock <- try(UnblockWorker(workerid, reason, keypair = keypair, 
-                print = TRUE, log.requests = log.requests, sandbox = sandbox), 
+            unblock <- try(UnblockWorker(workerid, reason, verbose = TRUE, ...), 
                 silent = TRUE)
             if (class(unblock) == "try-error") 
                 warning("An error occurred: ", unblock)
@@ -328,13 +310,11 @@ function (graphics = FALSE, sandbox = NULL)
                 qual <- readline(prompt = "QualificationTypeId: ")
                 if (qual == "") 
                   wizard.menu()
-                getqual <- try(GetQualifications(qual, keypair = keypair, 
-                  print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                getqual <- try(GetQualifications(qual, verbose = TRUE, ...), silent = TRUE)
                 if (class(getqual) == "try-error") 
-					warning("An error occurred: ", getqual)
+                    warning("An error occurred: ", getqual)
                 else
-					print(getqual)
+                    print(getqual)
             }
             else if (qual.choice == 2) {
                 message("For which QualificationType do you want to retrieve workers?")
@@ -342,14 +322,13 @@ function (graphics = FALSE, sandbox = NULL)
                 message("For what worker do you want to retrieve the score?")
                 worker <- readline(prompt = "WorkerId: ")
                 if (qual == "" | worker == "") 
-                  wizard.menu()
-                getqual <- try(GetQualificationScore(qual, worker, 
-                  keypair = keypair, print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                    wizard.menu()
+                getqual <- try(GetQualificationScore(qual, worker, verbose = TRUE, ...),
+                               silent = TRUE)
                 if (class(getqual) == "try-error") 
-					warning("An error occurred: ", getqual)
+                    warning("An error occurred: ", getqual)
                 else
-					print(getqual)
+                    print(getqual)
             }
             else if (qual.choice == 3) {
                 message("For which QualificationType do you want to retrieve workers?")
@@ -359,15 +338,13 @@ function (graphics = FALSE, sandbox = NULL)
                 message("What value do you want to assign for the qualification?")
                 value <- readline(prompt = "Value: ")
                 if (qual == "" | worker == "") 
-                  wizard.menu()
-                getqual <- try(UpdateQualificationScore(qual, 
-                  worker, value, keypair = keypair, print = TRUE, 
-                  log.requests = log.requests, sandbox = sandbox), 
-                  silent = TRUE)
+                    wizard.menu()
+                getqual <- try(UpdateQualificationScore(qual, worker, value, verbose = TRUE, ...), 
+                               silent = TRUE)
                 if (class(getqual) == "try-error") 
-					warning("An error occurred: ", getqual)
+                    warning("An error occurred: ", getqual)
                 else
-					print(getqual)
+                    print(getqual)
             }
             else if (qual.choice == 4) {
                 message("Please enter information for QualificationType below")
@@ -380,14 +357,12 @@ function (graphics = FALSE, sandbox = NULL)
                 keywords <- readline(prompt = "Keywords (enter comma-separated list or leave blank): ")
                 if (keywords == "") 
                   keywords <- NULL
-                getqual <- try(CreateQualificationType(name, 
-                  description, status = "Active", keywords, keypair = keypair, 
-                  print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                getqual <- try(CreateQualificationType(name, description,
+                               status = "Active", keywords, verbose = TRUE, ...), silent = TRUE)
                 if (class(getqual) == "try-error") 
-					warning("An error occurred: ", getqual)
+                    warning("An error occurred: ", getqual)
                 else
-					print(getqual)
+                    print(getqual)
             }
             else if (qual.choice == 5) {
                 message("Which QualificationType do you want to update?")
@@ -398,15 +373,13 @@ function (graphics = FALSE, sandbox = NULL)
                   wizard.menu()
                 else if (update.choice == 1) {
                   description <- readline(prompt = "Description QualificationType (Workers can see this): ")
-                  getqual <- try(UpdateQualificationType(qual, 
-                    description, keypair = keypair, print = TRUE, 
-                    log.requests = log.requests, sandbox = sandbox), 
-                    silent = TRUE)
+                  getqual <- try(UpdateQualificationType(qual, description, verbose = TRUE, ...), 
+                                 silent = TRUE)
                   if (class(getqual) == "try-error") 
-					warning("An error occurred: ", getqual)
+                    warning("An error occurred: ", getqual)
                   else
-					print(getqual)
-				  message()
+                    print(getqual)
+                  message()
                   wizard.menu()
                 }
                 else if (update.choice == 2) {
@@ -418,10 +391,8 @@ function (graphics = FALSE, sandbox = NULL)
                     status.update <- "Active"
                   else if (status.choice == 2) 
                     status.update <- "Inactive"
-                  getqual <- try(UpdateQualificationType(qual, 
-                    status = status.update, keypair = keypair, 
-                    print = TRUE, log.requests = log.requests, 
-                    sandbox = sandbox), silent = TRUE)
+                  getqual <- try(UpdateQualificationType(qual, status = status.update, 
+                                 verbose = TRUE, ...), silent = TRUE)
                   if (class(getqual) == "try-error") 
                     warning("An error occurred: ", getqual)
                   else print(getqual)
@@ -440,10 +411,8 @@ function (graphics = FALSE, sandbox = NULL)
                     auto.update <- FALSE
                     value.update <- NULL
                   }
-                  getqual <- try(UpdateQualificationType(qual, 
-                    auto = auto.update, auto.value = value.update, 
-                    keypair = keypair, print = TRUE, log.requests = log.requests, 
-                    sandbox = sandbox), silent = TRUE)
+                  getqual <- try(UpdateQualificationType(qual, auto = auto.update, 
+                                 auto.value = value.update, verbose = TRUE, ...), silent = TRUE)
                   if (class(getqual) == "try-error") 
                     warning("An error occurred: ", getqual)
                   else print(getqual)
@@ -456,9 +425,7 @@ function (graphics = FALSE, sandbox = NULL)
                 qual <- readline(prompt = "QualificationTypeId: ")
                 if (qual == "") 
                   wizard.menu()
-                getqual <- try(GetQualificationType(qual, keypair = keypair, 
-                  print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                getqual <- try(GetQualificationType(qual, verbose = TRUE, ...), silent = TRUE)
                 if (class(getqual) == "try-error") 
                   warning("An error occurred: ", getqual)
                 else print(getqual)
@@ -474,8 +441,7 @@ function (graphics = FALSE, sandbox = NULL)
                 else if (searchq == 2) 
                   searchq <- FALSE
                 getqual <- try(SearchQualificationTypes(only.mine = searchq, 
-                  keypair = keypair, print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                               verbose = TRUE, ...), silent = TRUE)
                 if (class(getqual) == "try-error") 
                   warning("An error occurred: ", getqual)
                 else print(getqual)
@@ -495,9 +461,8 @@ function (graphics = FALSE, sandbox = NULL)
             if (period.choice == 0) 
                 wizard.menu()
             else {
-                statistics <- try(RequesterReport(period = periods[period.choice], 
-                  keypair = keypair, print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                statistics <- try(RequesterReport(period = periods[period.choice], ...), silent = TRUE)
+                print(statistics)
                 if (class(statistics) == "try-error") 
                   warning("An error occurred: ", statistics)
                 message()
@@ -513,9 +478,8 @@ function (graphics = FALSE, sandbox = NULL)
                 wizard.menu()
             else {
                 statistics <- try(WorkerReport(worker = workerid, 
-                  period = periods[period.choice], keypair = keypair, 
-                  print = TRUE, log.requests = log.requests, 
-                  sandbox = sandbox), silent = TRUE)
+                                  period = periods[period.choice], ...), silent = TRUE)
+                print(statistics)
                 if (class(statistics) == "try-error") 
                   warning("An error occurred: ", statistics)
                 message()

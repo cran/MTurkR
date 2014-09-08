@@ -1,16 +1,10 @@
 RejectAssignment <-
 RejectAssignments <-
 reject <-
-function (assignments, feedback = NULL, keypair = credentials(), 
-    print = getOption('MTurkR.print'), browser = getOption('MTurkR.browser'),
-    log.requests = getOption('MTurkR.log'), sandbox = getOption('MTurkR.sandbox'),
-    validation.test = getOption('MTurkR.test')) {
-    if(!is.null(keypair)) {
-        keyid <- keypair[1]
-        secret <- keypair[2]
-    }
-    else
-        stop("No keypair provided or 'credentials' object not stored")
+function (assignments, feedback = NULL, verbose = getOption('MTurkR.verbose'), ...){
+    # temporary check for `print` argument (remove after v1.0)
+    if('print' %in% names(list(...)) && is.null(verbose))
+        verbose <- list(...)$print
     operation <- "RejectAssignment"
     if(is.factor(assignments))
         assignments <- as.character(assignments)
@@ -32,38 +26,24 @@ function (assignments, feedback = NULL, keypair = credentials(),
         GETparameters <- paste("&AssignmentId=", assignments[i], sep = "")
         if(!is.null(feedback[i])) 
             GETparameters <- paste(GETparameters, "&RequesterFeedback=", 
-                curlEscape(feedback[i]), sep = "")
-        auth <- authenticate(operation, secret)
-        if(browser == TRUE) {
-            request <- request(keyid, auth$operation, auth$signature, 
-                auth$timestamp, GETparameters, browser = browser, 
-                sandbox = sandbox, validation.test = validation.test)
-			if(validation.test)
-				invisible(request)
+                curlEscape(feedback[i]), sep = "")        
+        request <- request(operation, GETparameters = GETparameters, ...)
+        if(is.null(request$valid))
+            return(request)
+        if(!is.null(feedback)) 
+            Assignments[i, ] <- c(assignments[i], feedback[i], 
+              request$valid)
+        else
+            Assignments[i, ] <- c(assignments[i], "", request$valid)
+        if(request$valid == TRUE) {
+            if(verbose) 
+                message(i, ": Assignment (", assignments[i], ") Rejected")
         }
-        else {
-            request <- request(keyid, auth$operation, auth$signature, 
-                auth$timestamp, GETparameters, log.requests = log.requests, 
-                sandbox = sandbox, validation.test = validation.test)
-			if(validation.test)
-				invisible(request)
-            if(!is.null(feedback)) 
-                Assignments[i, ] <- c(assignments[i], feedback[i], 
-                  request$valid)
-            else
-                Assignments[i, ] <- c(assignments[i], "", request$valid)
-            if(request$valid == TRUE) {
-                if(print == TRUE) 
-                    message(i, ": Assignment (", assignments[i], ") Rejected")
-            }
-            if(request$valid == FALSE) {
-                if(print == TRUE) 
-                    warning(i, ": Invalid request for assignment ",assignments[i])
-            }
+        if(request$valid == FALSE) {
+            if(verbose) 
+                warning(i, ": Invalid request for assignment ",assignments[i])
         }
     }
-    if(print == TRUE)
-        return(Assignments)
-    else
-		invisible(Assignments)
+    Assignments$Valid <- factor(Assignments$Valid, levels=c('TRUE','FALSE'))
+    return(Assignments)
 }
