@@ -4,12 +4,12 @@
 \title{Get a Worker's Qualification Score}
 \description{Get a Worker's score for a specific Qualification. You can only retrieve scores for custom QualificationTypes. Scores for built-in QualificationTypes should be retrieved with \code{\link{GetWorkerStatistic}}.}
 \usage{
-GetQualificationScore(qual, workers, verbose = getOption('MTurkR.verbose'), ...)
+GetQualificationScore(qual, workers, verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{qual}{A character string containing a QualificationTypeId for a custom QualificationType.}
   \item{workers}{A character string containing a WorkerId, or a vector of character strings containing multiple WorkerIds, whose Qualification Scores you want to retrieve.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -17,7 +17,7 @@ A function to retrive one or more scores for a specified QualificationType. To r
 
 \code{qualscore()} is an alias.
 }
-\value{A dataframe containing the WorkerId, QualificationTypeId, and the Qualification score for each request.}
+\value{A dataframe containing the QualificationTypeId, WorkerId, time the qualification was granted, the Qualification score, a column indicating the status of the qualification, and a column indicating whether the API request was valid.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationScoreOperation.html}{API Reference}
 }
@@ -30,7 +30,17 @@ A function to retrive one or more scores for a specified QualificationType. To r
 }
 \examples{
 \dontrun{
-GetQualificationScore("2YCIA0RYNJ9262B1D82MPTUEXAMPLE","A1RO9UJNWXMU65")
+qual1 <- 
+AssignQualification(workers = "A1RO9UJNWXMU65",
+                    name = "Worked for me before",
+                    description = "This qualification is for people who have worked for me before",
+                    status = "Active",
+                    keywords = "Worked for me before")
+
+GetQualificationScore(qual1$QualificationTypeId, qual1$WorkerId)
+
+# cleanup
+DisposeQualificationType(qual1$QualificationTypeId)
 }
 }
 \keyword{Qualifications}

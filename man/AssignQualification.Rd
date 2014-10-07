@@ -13,7 +13,7 @@ AssignQualification(qual, workers, value = "1", notify = FALSE,
                     conditional.statistic = NULL, conditional.comparator = NULL, 
                     conditional.value = NULL, conditional.period = NULL, 
                     set.statistic.as.value = FALSE, 
-                    verbose = getOption('MTurkR.verbose'), ...)
+                    verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{qual}{A character string containing a QualificationTypeId.}
@@ -35,7 +35,7 @@ AssignQualification(qual, workers, value = "1", notify = FALSE,
   \item{conditional.value}{An optional numeric or character string value against which workers scores will be compared. The QualificationType will only be assigned to those whose score on the specified statistic meet the comparison to this value.}
   \item{conditional.period}{An optional character string specifying the period for the statistic. Must be one of: \dQuote{OneDay}, \dQuote{SevenDays}, \dQuote{ThirtyDays}, \dQuote{LifeToDate}. Default is \dQuote{LifeToDate}.}
   \item{set.statistic.as.value}{An optional logical specifying whether the worker's value of the statistic should be used as the value they are assigned for the QualificationType. Default is \code{FALSE} and \code{value} is used instead.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -56,22 +56,32 @@ A very robust function to assign a Qualification to one or more workers. The sim
 }
 \examples{
 \dontrun{
+qual1 <- 
+CreateQualificationType(name="Worked for me before",
+    description="This qualification is for people who have worked for me before",
+    status = "Active",
+    keywords="Worked for me before")
+
 # assign qualification to single worker
-a <- AssignQualification("2YCIA0RYNJ9262B1D82MPTUEXAMPLE","A1RO9UJNWXMU65",values="50")
+AssignQualification(qual1$QualificationTypeId, "A1RO9UJNWXMU65", value = "50")
 
-# assign a new qualification (defined atomically) to multiple workers
-b <- AssignQualification(
-workers=c("A1RO9UJNWXMU65","A9MZ9UJN4DMU78"),
-title="Worked for me before",
-description="This qualification is for people who have worked for me before",
-keywords="Worked for me before")
+# assign a new qualification (defined atomically)
+AssignQualification(workers = "A1RO9UJNWXMU65",
+                    name = "Worked for me before",
+                    description = "This qualification is for people who have worked for me before",
+                    status = "Active",
+                    keywords = "Worked for me before")
 
-# assign a qualification to a list of workers based upon their worker statistics
-c <- AssignQualification("2YCIA0RYNJ9262B1D82MPTUEXAMPLE",
-workers=c("A1RO9UJNWXMU65","A9MZ9UJN4DMU78","AE4Q9UYN4UI97D"),
-conditional.statistic="NumberAssignmentsApproved",
-conditional.comparator=">", conditional.value="5", 
-conditional.period="LifeToDate", set.statistic.as.value=TRUE)
+# assign a qualification to a workers based upon their worker statistic
+AssignQualification(qual1$QualificationTypeId,
+    workers="A1RO9UJNWXMU65",
+    conditional.statistic="NumberAssignmentsApproved",
+    conditional.comparator=">", 
+    conditional.value="5", 
+    conditional.period="LifeToDate", 
+    set.statistic.as.value=TRUE)
+
+DisposeQualificationType(qual1$QualificationTypeId)
 }
 }
 \keyword{Qualifications}

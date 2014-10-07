@@ -9,17 +9,19 @@
 \usage{
 GetHIT(hit, response.group = NULL,
        return.hit.dataframe = TRUE, return.qual.dataframe = TRUE,
-       verbose = getOption('MTurkR.verbose'), ...)
+       verbose = getOption('MTurkR.verbose', TRUE), ...)
 
-HITStatus(hit = NULL, hit.type = NULL, verbose = getOption('MTurkR.verbose'), ...)
+HITStatus(hit = NULL, hit.type = NULL, annotation = NULL,
+          verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
-  \item{hit}{An optional character string specifying the HITId of the HIT to be retrieved. Must specify \code{hit} xor \code{hit.type}.}
-  \item{hit.type}{An optional character string specifying the HITTypeId (or a vector of HITTypeIds) of the HIT(s) to be retrieved. Must specify \code{hit} xor \code{hit.type}, otherwise all HITs are returned in \code{HITStatus}.}
+  \item{hit}{An optional character string specifying the HITId of the HIT to be retrieved. Must specify \code{hit} xor \code{hit.type} xor \code{annotation}.}
+  \item{hit.type}{An optional character string specifying the HITTypeId (or a vector of HITTypeIds) of the HIT(s) to be retrieved. Must specify \code{hit} xor \code{hit.type} xor \code{annotation}, otherwise all HITs are returned in \code{HITStatus}.}
+  \item{annotation}{An optional character string specifying the value of the \code{RequesterAnnotation} field for a batch of HITs. This can be used to retrieve all HITs from a \dQuote{batch} created in the online Requester User Interface (RUI). To use a batch ID, the batch must be written in a character string of the form \dQuote{BatchId:78382;}, where \dQuote{73832} is the batch ID shown in the RUI. Must specify \code{hit} xor \code{hit.type} xor \code{annotation}, otherwise all HITs are returned in \code{HITStatus}.}
   \item{response.group}{An optional character string (or vector of character strings) specifying what details of each HIT to return of: \dQuote{Request}, \dQuote{Minimal}, \dQuote{HITDetail}, \dQuote{HITQuestion}, \dQuote{HITAssignmentSummary}. For more information, see \url{http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CommonParametersArticle.html}.}
   \item{return.hit.dataframe}{A logical indicating whether the dataframe of HITs should be returned. Default is \code{TRUE}.}
   \item{return.qual.dataframe}{A logical indicating whether the list of each HIT's QualificationRequirements (stored as dataframes in that list) should be returned. Default is \code{TRUE}.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -27,7 +29,7 @@ HITStatus(hit = NULL, hit.type = NULL, verbose = getOption('MTurkR.verbose'), ..
 
 \code{gethit()} and \code{hit()} are aliases for \code{GetHIT}. \code{status()} is an alias for \code{HITStatus}.
 }
-\value{Optionally a dataframe containing the HITs and a list of each HIT's QualificationRequirements (stored as dataframes in that list in the order that HITs were retrieved.). The exact characteristics of each HIT returned depend upon the \code{response.group} parameter.}
+\value{Optionally a one- or two-element list containing a dataframe of HIT details and, optionally, a list of each HIT's QualificationRequirements (stored as dataframes in that list in the order that HITs were retrieved.).}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITOperation.html}{API Reference}
 }
@@ -42,10 +44,28 @@ HITStatus(hit = NULL, hit.type = NULL, verbose = getOption('MTurkR.verbose'), ..
 }
 \examples{
 \dontrun{
-GetHIT("2MQB727M0IGF304GJ16S1F4VE3AYDQ")
-HITStatus("2MQB727M0IGF304GJ16S1F4VE3AYDQ")
-hits <- c("2MQB727M0IGF304GJ16S1F4VE3AYDQ","AM4DB727M0IGF304GJ16S1F4VE36JIQ")
-HITStatus(hits)
+# register HITType
+hittype <- 
+RegisterHITType(title="10 Question Survey",
+                description=
+                "Complete a 10-question survey about news coverage and your opinions",
+                reward=".20", 
+                duration=seconds(hours=1), 
+                keywords="survey, questionnaire, politics")
+
+a <- GenerateExternalQuestion("http://www.example.com/","400")
+hit1 <- 
+CreateHIT(hit.type = hittype$HITTypeId, question = a$string)
+
+GetHIT(hit1$HITId)
+HITStatus(hit1$HITId)
+
+# cleanup
+DisableHIT(hit1$HITId)
+}
+\dontrun{
+# Get the status of all HITs from a given batch from the RUI
+HITStatus(annotation="BatchId:78382;")
 }
 }
 \keyword{HITs}

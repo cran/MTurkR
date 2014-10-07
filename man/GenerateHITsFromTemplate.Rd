@@ -7,17 +7,17 @@
 GenerateHITsFromTemplate(template, input, filenames = NULL, write.files = FALSE)
 }
 \arguments{
-  \item{template}{A file handle for an .html HIT template saved in the working directory.}
+  \item{template}{A character string or filename for an .html HIT template}
   \item{input}{A dataframe containing one row for each HIT to be created and columns named identically to the placeholders in the HIT template file. Operation will fail if variable names do not correspond.}
   \item{filenames}{An optional list of filenames for the HITs to be created. Must be equal to the number of rows in \code{input}.}
   \item{write.files}{A logical specifying whether HIT .html files should be created and stored in the working directory. Or, alternatively, whether HITs should be returned as character vectors in a list.}
 }
 \details{
-Generate HITs from a HIT template (containing placeholders for input data). The tool provides functionality analogous to the MTurk RUI HIT template and can be performed on .html files generated therein.
+Generate HITs from a HIT template (containing placeholders for input data of the form \code{\$\{variablename\}}). The tool provides functionality analogous to the MTurk RUI HIT template and can be performed on .html files generated therein. The HITs are returned as a list of character strings. If \code{write.files = TRUE}, a side effect occurs in the form of one or more .html files being written to the working directory, with filenames specified by the \code{filenames} option or, if \code{filenames=NULL} of the form \dQuote{NewHIT1.html}, \dQuote{NewHIT2.html}, etc.
 
 \code{hitsfromtemplate()} is an alias.
 }
-\value{If \code{write.files=FALSE}, a list containing a character string for each HIT generated from the template. Otherwise, one or more HITs in the form of .html files stored in the working directory, with filenames specified by the \code{filenames} option or, if \code{filenames=NULL} of the form \dQuote{NewHIT1.html}, \dQuote{NewHIT2.html}, etc.}
+\value{A list containing a character string for each HIT generated from the template.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/RequesterUI/CreatingaHITTemplate.html}{API Reference: Operation}
 
@@ -28,9 +28,34 @@ Generate HITs from a HIT template (containing placeholders for input data). The 
 %\seealso{}
 \examples{
 \dontrun{
-a <- data.frame(c("HIT text 1","HIT text 2","HIT text 3"))
-names(a) <- "hitvariable"
-GenerateHITsFromTemplate("mynewhit.html",input=a,write.files=TRUE)
+a <- data.frame(hitvariable = c("HIT text 1","HIT text 2","HIT text 3"), stringsAsFactors=FALSE)
+temp <- '<html><head></head><body>
+<div>${hitvariable}<br/>
+Question 1: <input type="text" name="var1"><br/>
+Question 2: <input type="text" name="var2">
+</div></body></html>'
+
+# create templates
+temps <- GenerateHITsFromTemplate(temp, input = a)
+
+# create HITs from template
+hittype1 <- 
+RegisterHITType(title="2 Question Survey",
+                description=
+                "Complete a 2-question survey",
+                reward=".20", 
+                duration=seconds(hours=1), 
+                keywords="survey, questionnaire, politics")
+hits <- lapply(temps, function(x) {
+    CreateHIT(hit.type = hittype1$HITTypeId, 
+              expiration = seconds(days = 1),
+              assignments = 2,
+              question = GenerateHTMLQuestion(x)$string)
+})
+
+# cleanup
+ExpireHIT(hit.type = hittype1$HITTypeId)
+DisposeHIT(hit.type = hittype1$HITTypeId)
 }
 }
 \keyword{HITs}

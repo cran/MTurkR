@@ -3,7 +3,7 @@ searchquals <-
 function (query = NULL, only.mine = TRUE, only.requestable = FALSE, 
     return.all = FALSE, pagenumber = "1", pagesize = "10", sortproperty = "Name", 
     sortdirection = "Ascending", return.qual.dataframe = TRUE, 
-    verbose = getOption('MTurkR.verbose'), ...) {
+    verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
@@ -38,21 +38,24 @@ function (query = NULL, only.mine = TRUE, only.requestable = FALSE,
                             "<TotalNumResults>")[[1]][2], "</TotalNumResults>")[[1]][1])
         batch$batch.total <- length(xpathApply(xmlParse(batch$xml), "//QualificationTypeId"))
         if(return.qual.dataframe) {
-            if(batch$total > 0) 
+            if(batch$total > 0) {
+                s <- getOption("stringsAsFactors")
+                options("stringsAsFactors" = FALSE)
                 batch$quals <- as.data.frame.QualificationTypes(xml.parsed = xmlParse(batch$xml))
+                options("stringsAsFactors" = s)
+            }
         }
         return(batch)
     }
-    request <- batch(GETparameters, pagenumber, pagesize)
-    if(is.null(request$valid))
-        return(request)
-    runningtotal <- request$batch.total
-    pagenumber <- 2
     if(return.all) {
         sortproperty <- "Name"
         sortdirection <- "Ascending"
         pagesize <- "100"
         pagenumber <- "1"
+        request <- batch(GETparameters, pagenumber, pagesize)
+        if(is.null(request$valid))
+            return(request)
+        runningtotal <- request$batch.total
         while(request$total > runningtotal) {
             nextbatch <- batch(GETparameters, pagenumber, pagesize)
             if(is.null(nextbatch$valid))
@@ -64,8 +67,12 @@ function (query = NULL, only.mine = TRUE, only.requestable = FALSE,
                 request$quals <- rbind(request$quals, nextbatch$quals)
             request$pages.returned <- pagesize
             runningtotal <- runningtotal + request$batch.total
-            pagenumber <- pagenumber + 1
+            pagenumber <- as.numeric(pagenumber) + 1
         }
+    } else {
+        request <- batch(GETparameters, pagenumber, pagesize)
+        if(is.null(request$valid))
+            return(request)
     }
     request$batch.total <- NULL
     if(request$valid[1] & verbose)

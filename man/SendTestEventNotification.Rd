@@ -5,12 +5,12 @@
 \description{Test a HITType Notification, for example, to try out a HITType Notification before creating a HIT.}
 \usage{
 SendTestEventNotification(notification, test.event.type, 
-                          verbose = getOption('MTurkR.verbose'), ...)
+                          verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{notification}{A character string containing a URL query parameter-formatted Notification structure (e.g., returned by \code{\link{GenerateNotification}}).}
   \item{test.event.type}{A character string containing one of: \code{AssignmentAccepted}, \code{AssignmentAbandoned}, \code{AssignmentReturned}, \code{AssignmentSubmitted}, \code{HITReviewable}, \code{HITExpired} (the default), \code{Ping}.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -18,7 +18,7 @@ Test a Notification configuration. The test mimics whatever the Notification con
 
 \code{notificationtest} is an alias.
 }
-\value{Potentially either an email sent to the email address specified in the \code{notification} parameter, or an AWS Simple Queue Service event. Otherwise, nothing.}
+\value{A dataframe containing the notification, the event type, and details on whether the request was valid.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SendTestEventNotificationOperation.html}{API Reference}
 }
@@ -31,9 +31,20 @@ Test a Notification configuration. The test mimics whatever the Notification con
 }
 \examples{
 \dontrun{
-a <- GenerateNotification("requester@example.com",event.type="HITExpired")
-SendTestEventNotification(a,test.event.type="HITReviewable") # no notification email will be sent
-SendTestEventNotification(a,test.event.type="HITExpired") # notification email will be sent
+hittype <- 
+RegisterHITType(title="10 Question Survey",
+                description=
+                "Complete a 10-question survey about news coverage and your opinions",
+                reward=".20", 
+                duration=seconds(hours=1), 
+                keywords="survey, questionnaire, politics")
+
+a <- GenerateNotification("requester@example.com", event.type = "HITExpired")
+SetHITTypeNotification(hit.type = hittype$HITTypeId, 
+                       notification = a,
+                       active = TRUE)
+# send test notification
+SendTestEventNotification(a, test.event.type="HITExpired")
 }
 }
 \keyword{Notifications}

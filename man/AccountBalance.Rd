@@ -6,9 +6,9 @@
 \title{Retrieve MTurk account balance}
 \description{Retrieves the amount of money (in US Dollars) in your MTurk account. \code{SufficientFunds} provides a wrapper that checks whether your account has sufficient funds based upon specified characters of your HIT.}
 \usage{
-AccountBalance(verbose = getOption('MTurkR.verbose'), ...)
+AccountBalance(verbose = getOption('MTurkR.verbose', TRUE), ...)
 
-SufficientFunds(amount, assignments = NULL, hits = NULL, 
+SufficientFunds(amount = NULL, assignments = NULL, hits = NULL, 
                 bonus.ct = NULL, bonus.amount = NULL, masters = FALSE, 
                 turkfee = 0.1, turkmin = 0.005, mastersfee = 0.2, ...)
 }
@@ -22,7 +22,7 @@ SufficientFunds(amount, assignments = NULL, hits = NULL,
   \item{turkfee}{Amazon's fee as percentage of payments. Default is 10-percent (as 0.10).}
   \item{turkmin}{Amazon's minimum per-assignment fee. Default is $0.005.}
   \item{mastersfee}{Amazon's additional charge for use of MTurk Masters. Default is 20-percent (as 0.20).}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -30,7 +30,7 @@ SufficientFunds(amount, assignments = NULL, hits = NULL,
 
 \code{accountbalance()} and \code{getbalance()} are aliases for \code{AccountBalance}.
 }
-\value{Return value is an object of class \dQuote{MTurkResponse}, including an additional character string (\code{balance}) containing the balance of the account in US Dollars.}
+\value{Return value is an object of class \dQuote{MTurkResponse}, including an additional character string (\code{balance}) containing the balance of the account in US Dollars. Note: object is returned invisibly.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAccountBalanceOperation.html}{API Reference}
 }
@@ -40,7 +40,7 @@ SufficientFunds(amount, assignments = NULL, hits = NULL,
 \examples{
 \dontrun{
 AccountBalance()
-SufficientFunds(amount=".25", assignments="50", hits="5")
-SufficientFunds(bonus.ct="150", bonus.amount=".75")
+SufficientFunds(amount = ".25", assignments = "50", hits = "5")
+SufficientFunds(bonus.ct = "150", bonus.amount = ".75")
 }
 }

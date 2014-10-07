@@ -4,14 +4,16 @@
 \title{Disable HIT}
 \description{Disabling a HIT is probably not what you want to do. DisableHIT automatically removes the HIT from the MTurk server, approves (and thus pays for) all submitted and pending assignments, and then permanently deletes all assignment data.}
 \usage{
-DisableHIT( hit = NULL, hit.type = NULL, response.group = NULL, 
-            verbose = getOption('MTurkR.verbose'), ...)
+DisableHIT(hit = NULL, hit.type = NULL, annotation = NULL,
+           response.group = NULL, 
+           verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
-  \item{hit}{A character string containing a HITId or a vector of character strings containing multiple HITIds.}
-  \item{hit.type}{An optional character string containing a HITTypeId (or a vector of HITTypeIds).}
+  \item{hit}{A character string containing a HITId or a vector of character strings containing multiple HITIds. Must specify \code{hit} xor \code{hit.type} xor \code{annotation}.}
+  \item{hit.type}{An optional character string containing a HITTypeId (or a vector of HITTypeIds). Must specify \code{hit} xor \code{hit.type} xor \code{annotation}.}
+  \item{annotation}{An optional character string specifying the value of the \code{RequesterAnnotation} field for a batch of HITs. This can be used to disable all HITs from a \dQuote{batch} created in the online Requester User Interface (RUI). To use a batch ID, the batch must be written in a character string of the form \dQuote{BatchId:78382;}, where \dQuote{73832} is the batch ID shown in the RUI. Must specify \code{hit} xor \code{hit.type} xor \code{annotation}.}
   \item{response.group}{An optional character string specifying what details of each HIT to return of: \dQuote{Minimal}, \dQuote{HITQuestion}, \dQuote{HITDetail}, \dQuote{HITAssignmentSummary}. For more information, see \url{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_HITDataStructureArticle.html}.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -35,7 +37,19 @@ Disable a HIT (and its assignment data). This is a somewhat risky function becau
 \code{\link{DisposeHIT}}
 }
 \examples{
-\dontrun{DisableHIT(hit="2MQB727M0IGF304GJ16S1F4VE3AYDQ")}
-\dontrun{DisableHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW")}
+\dontrun{
+# Disable a single HIT
+b <- GenerateExternalQuestion("http://www.example.com/","400")
+hit1 <- CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", 
+                  expiration = seconds(days = 1),
+                  question=b$string)
+DisableHIT(hit = hit1$HITId)
+
+# Disable all HITs of a given HITType
+DisableHIT(hit.type = hit1$HITTypeId)
+
+# Disable all HITs of a given batch from the RUI
+DisableHIT(annotation="BatchId:78382;")
+}
 }
 \keyword{HITs}

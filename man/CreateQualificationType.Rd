@@ -9,7 +9,7 @@ CreateQualificationType(name, description, status, keywords = NULL,
                         test.duration = NULL,
                         validate.test = FALSE, validate.answerkey = FALSE,
                         auto = NULL, auto.value = NULL,
-                        verbose = getOption('MTurkR.verbose'), ...)
+                        verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{name}{A name for the QualificationType. This is visible to workers. It cannot be modified by \code{\link{UpdateQualificationType}}.}
@@ -24,7 +24,7 @@ CreateQualificationType(name, description, status, keywords = NULL,
   \item{validate.answerkey}{A logical specifying whether the \code{answerkey} parameter should be validated against the relevant MTurk schema prior to creating the QualificationType (operation will fail if it does not validate, and will return validation information). Default is \code{FALSE}.}
   \item{auto}{A logical indicating whether the Qualification is automatically granted to workers who request it. Default is \code{FALSE}.}
   \item{auto.value}{An optional parameter specifying the value that is automatically assigned to workers when they request it (if the Qualification is automatically granted).}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -32,7 +32,7 @@ A function to create a QualificationType. Active QualificationTypes are visible 
 
 \code{createqual()} is an alias.
 }
-\value{A dataframe containing the QualificationTypeId of the newly created QualificationType and other details as specified in the request.}
+\value{A dataframe containing the QualificationTypeId and other details of the newly created QualificationType.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html}{API Reference}
 }
@@ -49,10 +49,25 @@ A function to create a QualificationType. Active QualificationTypes are visible 
 }
 \examples{
 \dontrun{
-qual1 <- CreateQualificationType(name="Worked for me before",
-        description="This qualification is for people who have worked for me before",
-        keywords="Worked for me before",sandbox=TRUE)
-qual1
+qual1 <- 
+CreateQualificationType(name="Worked for me before",
+    description="This qualification is for people who have worked for me before",
+    status = "Active",
+    keywords="Worked for me before")
+DisposeQualificationType(qual1$QualificationTypeId)
 }
+
+\dontrun{
+# qualification with test and answer key
+qual1 <- 
+CreateQualificationType(name="Worked for me before",
+    description="This qualification is for people who have worked for me before",
+    test = paste0(readLines(system.file("qualificationtest1.xml", package = "MTurkR")), collapse="")
+    answerkey = paste0(readLines(system.file("answerkey1.xml", package = "MTurkR")), collapse="")
+    status = "Active",
+    keywords="Worked for me before")
+DisposeQualificationType(qual1$QualificationTypeId)
+}
+
 }
 \keyword{Qualifications}

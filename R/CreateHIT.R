@@ -8,7 +8,7 @@ function (hit.type = NULL, question = NULL, validate.question = FALSE,
     description = NULL, reward = NULL, duration = NULL, keywords = NULL, 
     auto.approval.delay = NULL, qual.req = NULL, hitlayoutid = NULL, 
     hitlayoutparameters = NULL, response.group = NULL, 
-    verbose = getOption('MTurkR.verbose'), ...) {
+    verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
@@ -89,11 +89,9 @@ function (hit.type = NULL, question = NULL, validate.question = FALSE,
         }
     }
     if (!is.null(assignment.review.policy)) 
-        GETparameters <- paste(GETparameters, "&AssignmentReviewPolicy=", 
-                               curlEscape(assignment.review.policy), sep = "")
+        GETparameters <- paste(GETparameters, assignment.review.policy, sep = "")
     if (!is.null(hit.review.policy)) 
-        GETparameters <- paste(GETparameters, "&HITReviewPolicy=", 
-                               curlEscape(hit.review.policy), sep = "")
+        GETparameters <- paste(GETparameters, hit.review.policy, sep = "")
     if (!is.null(annotation) && nchar(curlEscape(annotation)) > 255) 
         stop("Annotation must be <= 255 characters")
     else if (!is.null(annotation)) 

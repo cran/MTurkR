@@ -717,11 +717,9 @@ function(style="tcltk", sandbox=getOption('MTurkR.sandbox')) {
                     hittowrite <- tclvalue(tkget(hit.entry,"0.0","end"))
                     assigntowrite <- tclvalue(tkget(assign.entry,"0.0","end"))
                     if(hittowrite=="")
-                        hittowrite <- NULL
+                        assign("hitreviewpolicy", hittowrite, envir=wizardenv) # assign 'reviewpolicy' to wizardenv
                     if(assigntowrite=="")
-                        assigntowrite <- NULL
-                    result <- GenerateReviewPolicy(hitpolicy=, assignpolicy=)
-                    assign("reviewpolicy",result,envir=wizardenv) # assign 'reviewpolicy' to wizardenv
+                        assign("assignreviewpolicy", assigntowrite, envir=wizardenv) # assign 'reviewpolicy' to wizardenv
                     tkdestroy(reviewpolicyDialog)
                 }
                 # layout
@@ -781,16 +779,14 @@ function(style="tcltk", sandbox=getOption('MTurkR.sandbox')) {
                     tkfocus(createDialog)
                 }
                 else {
-                    if(is.null(wizardenv$reviewpolicy)){
+                    if(is.null(wizardenv$hitreviewpolicy))
                         hitpolicy <- NULL
+                    else
+                        hitpolicy <- wizardenv$hitreviewpolicy
+                    if(is.null(wizardenv$assignreviewpolicy))
                         assignpolicy <- NULL
-                    }
-                    else{
-                        if(exists("reviewpolicy$AssignmentReviewPolicy",envir=wizardenv))
-                            assignpolicy <- wizardenv$reviewpolicy$AssignmentReviewPolicy
-                        if(exists("reviewpolicy$HITReviewPolicy",envir=wizardenv))
-                            hitpolicy <- wizardenv$reviewpolicy$HITReviewPolicy
-                    }
+                    else
+                        assignpolicy <- wizardenv$assignreviewpolicy
                     newhit <- CreateHIT(    hit.type=tclvalue(hittype),
                                             question=wizardenv$question,
                                             expiration=seconds(as.numeric(tclvalue(days)),
@@ -3678,14 +3674,19 @@ function(style="tcltk", sandbox=getOption('MTurkR.sandbox')) {
         tkadd(topMenu, "cascade", label = "Qualifications", menu = qualifications, underline = 0)
         helpmenu <- tkmenu(topMenu, tearoff = FALSE)
             # help menu
+            tkadd(helpmenu, "command", label = "MTurkR Wizard Documentation", command = function()
+                browseURL("https://github.com/leeper/MTurkR/wiki/Wizard-Graphical") )
+            tkadd(helpmenu, "command", label = "MTurkR Wiki", command = function()
+                browseURL("https://github.com/leeper/MTurkR/wiki") )
+            tkadd(helpmenu, "command", label = "MTurkR Code Demos", command = function(){
+                tkmessageBox(message="Coming soon!", type="ok")
+            })
+            tkadd(helpmenu, "separator")
             tkadd(helpmenu, "command", label = "MTurk Worker Site", command = function() browseURL("http://www.mturk.com") )
             tkadd(helpmenu, "command", label = "MTurk Requester Site", command = function() browseURL("http://requester.mturk.com") )
             tkadd(helpmenu, "command", label = "Package Website", command = function() browseURL("http://cran.r-project.org/web/packages/MTurkR/") )
             tkadd(helpmenu, "command", label = "MTurkR Documentation", command = function()
                 browseURL("http://cran.r-project.org/web/packages/MTurkR/MTurkR.pdf") )
-            tkadd(helpmenu, "command", label = "MTurkR Code Demos", command = function(){
-                tkmessageBox(message="Coming soon!", type="ok")
-            })
             tkadd(helpmenu, "separator")
             tkadd(helpmenu, "command", label = "About", command =  function() {
                 aboutbox <- tktoplevel()

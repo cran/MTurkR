@@ -13,7 +13,7 @@ CreateHIT(hit.type = NULL, question = NULL, validate.question = FALSE,
           keywords = NULL, 
           auto.approval.delay = NULL, qual.req = NULL, 
           hitlayoutid = NULL, hitlayoutparameters = NULL, 
-          response.group = NULL, verbose = getOption('MTurkR.verbose'), ...)
+          response.group = NULL, verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{hit.type}{An optional character string specifying the HITTypeId that this HIT should be visibly grouped with (and whose properties, e.g. reward amount, this HIT should inherit).}
@@ -21,8 +21,8 @@ CreateHIT(hit.type = NULL, question = NULL, validate.question = FALSE,
   \item{validate.question}{A logical specifying whether the \code{question} parameter should be validated against the relevant MTurk schema prior to creating the HIT (operation will fail if it does not validate, and will return validation information). Default is \code{FALSE}.}
   \item{expiration}{The time (in seconds) that the HIT should be available to workers. Must be between 30 and 31536000 seconds.}
   \item{assignments}{A character string specifying the number of assignments}
-  \item{assignment.review.policy}{An optional character string containing an XML-formatted Assignment-level ReviewPolicy data structure. MTurkR currently does not provide functionality to generate a ReviewPolicy, but users who generate their own ReviewPolicy should be able to use this parameter.}
-  \item{hit.review.policy}{An optional character string containing an XML-formatted HIT-level ReviewPolicy data structure. MTurkR currently does not provide functionality to generate a ReviewPolicy, but users who generate their own ReviewPolicy should be able to use this parameter.}
+  \item{assignment.review.policy}{An optional character string containing an Assignment-level ReviewPolicy data structure as returned by \code{\link{GenerateAssignmentReviewPolicy}}.}
+  \item{hit.review.policy}{An optional character string containing a HIT-level ReviewPolicy data structure as returned by \code{\link{GenerateHITReviewPolicy}}.}
   \item{annotation}{An optional character string annotating the HIT. This is not visible to workers, but can be used as a label by which to identify the HIT from the API.}
   \item{unique.request.token}{An optional character string, included only for advanced users.}
   \item{title}{A character string containing the title for the HITType. All HITs of this HITType will be visibly grouped to workers according to this title. Maximum of 128 characters.}
@@ -35,7 +35,7 @@ CreateHIT(hit.type = NULL, question = NULL, validate.question = FALSE,
   \item{hitlayoutid}{An optional character string including a HITLayoutId retrieved from a HIT template generated in the Requester User Interface, \url{https://requester.mturk.com/hit_templates}. If the HIT template includes variable placeholders, must also specify \code{hitlayoutparameters}.}
   \item{hitlayoutparameters}{An optional character string containing URL query parameter-formatted HITLayout parameters, for example returned by \code{\link{GenerateHITLayoutParameter}}. Must be specified along with a \code{hitlayoutid}.}
   \item{response.group}{An optional character string (or vector of character strings) specifying what details of each HIT to return of: \dQuote{Request}, \dQuote{Minimal}, \dQuote{HITDetail}, \dQuote{HITQuestion}, \dQuote{HITAssignmentSummary}. For more information, see \url{http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CommonParametersArticle.html}.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{This function creates a new HIT and makes it available to workers. Characteristics of the HIT can either be specified by including a valid HITTypeId for \dQuote{hit.type} or creating a new HITType by atomically specifying the characteristics of a new HITType.
@@ -46,7 +46,7 @@ When creating a ExternalQuestion HITs, the \code{\link{GenerateHITsFromTemplate}
 
 \code{createhit()} and \code{create()} are aliases.
 }
-\value{A dataframe containing the HITId of the newly created HIT and other details as requested by the \code{ResponseGroup} option.}
+\value{A dataframe containing the HITId and other details of the newly created HIT.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html}{API Reference}
 }
@@ -60,23 +60,43 @@ When creating a ExternalQuestion HITs, the \code{\link{GenerateHITsFromTemplate}
 \code{\link{DisableHIT}}
 
 \code{\link{DisposeHIT}}
+
+\code{\link{RegisterHITType}}
+
+\code{\link{GenerateHITReviewPolicy}}
+
+\code{\link{GenerateQualificationRequirement}}
 }
 \examples{
 \dontrun{
 a <- GenerateLayoutParameter("message","Text to display in HIT")
+hit1 <- 
 CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW",
           hitlayoutid="23ZGOOGQSCM61T1H5H9U0U00OQWFFU", 
+          expiration = seconds(days = 4),
           hitlayoutparameters=a)
 
-b <- GenerateExternalQuestion("http://www.example.com/myhit.html","400")
-CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", question=b$string)
-
-CreateHIT(title="Survey",
-          description="5 question survey",
-          reward=".10",
-          duration=seconds(days=4),
-          keywords="survey, questionnaire",
+b <- GenerateExternalQuestion("http://www.example.com/","400")
+hit2 <- 
+CreateHIT(hit.type="2FFNCWYB49F9BBJWA4SJUNST5OFSOW", 
+          expiration = seconds(days = 4),
           question=b$string)
+
+hit3 <- 
+CreateHIT(title = "Survey",
+          description = "5 question survey",
+          reward = ".10",
+          expiration = seconds(days = 4),
+          duration = seconds(hours = 1),
+          keywords = "survey, questionnaire",
+          question = b$string)
+
+ExpireHIT(hit1$HITId)
+ExpireHIT(hit2$HITId)
+ExpireHIT(hit3$HITId)
+DisposeHIT(hit1$HITId)
+DisposeHIT(hit2$HITId)
+DisposeHIT(hit3$HITId)
 }
 }
 \keyword{HITs}

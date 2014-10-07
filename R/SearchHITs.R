@@ -3,14 +3,14 @@ searchhits <-
 function (response.group = NULL, return.all = TRUE, pagenumber = "1", 
     pagesize = "10", sortproperty = "Enumeration", sortdirection = "Ascending", 
     return.hit.dataframe = TRUE, return.qual.dataframe = TRUE,
-    verbose = getOption('MTurkR.verbose'), ...) {
+    verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
     if('sandbox' %in% names(list(...)))
         sandbox <- list(...)$sandbox
     else
-        sandbox <- getOption('MTurkR.verbose')
+        sandbox <- getOption('MTurkR.verbose', TRUE)
     operation <- "SearchHITs"
     if(!sortproperty %in% c("Title", "Reward", "Expiration", 
         "CreationTime", "Enumeration")) 
@@ -104,7 +104,7 @@ function (response.group = NULL, return.all = TRUE, pagenumber = "1",
             if(length(allQuals)>0){
                 allNames <- character(length=length(allQuals))
                 for(i in 1:length(allQuals))
-                    allNames[i] <- GetQualificationType(allQuals[i], verbose = verbose, sandbox = sandbox)$Name
+                    allNames[i] <- GetQualificationType(allQuals[i], verbose = verbose, ...)$Name
                 for(i in 1:nrow(tmpdf)){
                     if(is.na(tmpdf$Name[i]))
                         tmpdf$Name[i] <- allNames[allQuals==tmpdf$QualificationTypeId[i]]

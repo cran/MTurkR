@@ -3,7 +3,7 @@ updatequal <-
 function (qual, description = NULL, status = NULL, retry.delay = NULL, 
     test = NULL, answerkey = NULL, test.duration = NULL,
     validate.test = FALSE, validate.answerkey = FALSE,
-    auto = NULL, auto.value = NULL, verbose = getOption('MTurkR.verbose'), ...) {
+    auto = NULL, auto.value = NULL, verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
@@ -78,7 +78,10 @@ function (qual, description = NULL, status = NULL, retry.delay = NULL,
     if(is.null(request$valid))
         return(request)
     if(request$valid) {
+        s <- getOption("stringsAsFactors")
+        options("stringsAsFactors" = FALSE)
         QualificationType <- as.data.frame.QualificationTypes(xml.parsed = xmlParse(request$xml))
+        options("stringsAsFactors" = s)
         if(verbose) {
             message("QualificationType ", QualificationType$QualificationTypeId[1],
                     " Updated")

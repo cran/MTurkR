@@ -6,14 +6,14 @@
 \description{Contact one or more workers. This sends an email with specified subject line and body text to one or more workers. This can be used to recontact workers in panel/longitudinal research or to send follow-up work. Most likely will need to be used in tandem with \code{\link{GrantBonus}} to implement panels.}
 \usage{
 ContactWorker(subjects, msgs, workers, batch = FALSE, 
-              verbose = getOption('MTurkR.verbose'), ...)
+              verbose = getOption('MTurkR.verbose', TRUE), ...)
 }
 \arguments{
   \item{subjects}{A character string containing subject line of an email, or a vector of character strings of of length equal to the number of workers to be contacted containing the subject line of the email for each worker. Maximum of 200 characters.}
   \item{msgs}{A character string containing body text of an email, or a vector of character strings of of length equal to the number of workers to be contacted containing the body text of the email for each worker. Maximum of 4096 characters. Newlines can be specified with \code{\\n} and tabs can be specified with \code{\\t} in the message body.}
   \item{workers}{A character string containing a WorkerId, or a vector of character strings containing multiple WorkerIds.}
   \item{batch}{A logical (default is \code{FALSE}), indicating whether workers should be contacted in batches of 100 (the maximum allowed by the API). This significantly reduces the time required to contact workers, but eliminates the ability to send customized messages to each worker.}
-  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MturkR.verbose')}.}
+  \item{verbose}{Optionally print the results of the API request to the standard output. Default is taken from \code{getOption('MTurkR.verbose', TRUE)}.}
   \item{...}{Additional arguments passed to \code{\link{request}}.}
 }
 \details{
@@ -39,11 +39,19 @@ b <- "Thanks for completing my HIT!
 I will pay a $.50 bonus if you complete a follow-up survey by Friday at 5:00pm.
 The survey can be completed at
 http://www.surveymonkey.com/s/pssurvey?c=A1RO9UEXAMPLE."
-c1 <- "A1RO9UEXAMPLE"
-d <- ContactWorker(subjects=a,msgs=b,workers=c)
 
+# contact one worker
+c1 <- "A1RO9UEXAMPLE"
+d <- ContactWorker(subjects = a,
+                   msgs = b,
+                   workers = c1)
+
+# contact multiple workers in batch
 c2 <- c("A1RO9EXAMPLE1","A1RO9EXAMPLE2","A1RO9EXAMPLE3")
-3 <- ContactWorker(subjects=a,msgs=b,workers=c2)
+e <- ContactWorker(subjects = a,
+                   msgs = b,
+                   workers = c2,
+                   batch = TRUE)
 }
 }
 \keyword{Workers}

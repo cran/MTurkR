@@ -1,8 +1,12 @@
 ExtendHIT <-
 extend <-
-function (hit = NULL, hit.type = NULL, add.assignments = NULL, 
-    add.seconds = NULL, unique.request.token = NULL,
-    verbose = getOption('MTurkR.verbose'), ...) {
+function(hit = NULL, 
+         hit.type = NULL, 
+         annotation = NULL, 
+         add.assignments = NULL, 
+         add.seconds = NULL, 
+         unique.request.token = NULL,
+         verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
@@ -36,21 +40,26 @@ function (hit = NULL, hit.type = NULL, add.assignments = NULL,
     else if(!is.null(unique.request.token)) 
         GETparameters <- paste(GETparameters, "&UniqueRequestToken=", 
             curlEscape(unique.request.token), sep = "")
-    if((is.null(hit) & is.null(hit.type)) | (!is.null(hit) & !is.null(hit.type))) 
-        stop("Must provide 'hit' xor 'hit.type'")
-    else if(!is.null(hit)){
+    if((is.null(hit) & is.null(hit.type) & is.null(annotation)) | 
+       (!is.null(hit) & !is.null(hit.type) & !is.null(annotation))) {
+        stop("Must provide 'hit' xor 'hit.type' xor 'annotation'")
+    } else if(!is.null(hit)){
         if(is.factor(hit))
             hit <- as.character(hit)
         hitlist <- hit
-    }
-    else if(!is.null(hit.type)) {
+    } else if(!is.null(hit.type)) {
         if(is.factor(hit.type))
             hit.type <- as.character(hit.type)
         hitsearch <- SearchHITs(verbose = FALSE, return.qual.dataframe = FALSE, ...)
         hitlist <- hitsearch$HITs$HITId[hitsearch$HITs$HITTypeId %in% hit.type]
-        if(length(hitlist) == 0 || is.null(hitlist))
-            stop("No HITs found for HITType")
+    } else if(!is.null(annotation)) {
+        if(is.factor(annotation))
+            annotation <- as.character(annotation)
+        hitsearch <- SearchHITs(verbose = FALSE, return.qual.dataframe = FALSE, ...)
+        hitlist <- hitsearch$HITs$HITId[hitsearch$HITs$RequesterAnnotation %in% annotation]
     }
+    if(length(hitlist) == 0 || is.null(hitlist))
+        stop("No HITs found for HITType")
     HITs <- setNames(data.frame(matrix(ncol=4, nrow=length(hitlist))), 
                 c("HITId", "AssignmentsIncrement", "ExpirationIncrement", "Valid"))
     for(i in 1:length(hitlist)) {
@@ -59,7 +68,7 @@ function (hit = NULL, hit.type = NULL, add.assignments = NULL,
         if(is.null(request$valid))
             return(request)
         HITs[i, ] <- c(hitlist[i], add.assignments, add.seconds, request$valid)
-        if(request$valid == TRUE & print == TRUE) {
+        if(request$valid & verbose) {
             if(!is.null(add.assignments) & !is.null(add.seconds)) 
                 message(i, ": HIT (", hitlist[i], ") Extended by ", 
                         add.assignments, " Assignments & ", add.seconds, " Seconds")
@@ -70,7 +79,7 @@ function (hit = NULL, hit.type = NULL, add.assignments = NULL,
                 message(i, ": HIT (", hitlist[i], ") Extended by ", 
                         add.seconds, " Seconds")
         }
-        else if(request$valid == FALSE & print == TRUE) {
+        else if(!request$valid & verbose) {
             warning(i, ": Invalid Request for HIT ", hitlist[i])
         }
     }

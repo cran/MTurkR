@@ -1,6 +1,6 @@
 GetQualificationType <-
 qualtype <-
-function(qual, verbose = getOption('MTurkR.verbose'), ...) {
+function(qual, verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
         verbose <- list(...)$print
@@ -12,7 +12,10 @@ function(qual, verbose = getOption('MTurkR.verbose'), ...) {
     if(is.null(request$valid))
         return(request)
     if(request$valid) {
+        s <- getOption("stringsAsFactors")
+        options("stringsAsFactors" = FALSE)
         Qualifications <- as.data.frame.QualificationTypes(xml.parsed = xmlParse(request$xml))
+        options("stringsAsFactors" = s)
         if(verbose) 
             message("QualificationType Retrieved: ", qual)
     } else if(!request$valid) {
