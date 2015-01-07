@@ -5,6 +5,9 @@ function(hit,
          policy.level = NULL, 
          retrieve.results = TRUE, 
          retrieve.actions = TRUE, 
+         return.all = FALSE, 
+         pagenumber = 1, 
+         pagesize = 400, 
          verbose = getOption('MTurkR.verbose', TRUE), ...) {
     # temporary check for `print` argument (remove after v1.0)
     if('print' %in% names(list(...)) && is.null(verbose))
@@ -43,32 +46,58 @@ function(hit,
         else if(retrieve.results == FALSE) 
             GETparameters <- paste(GETparameters, "&RetrieveResults=F", sep = "")
     }
-    
-    request <- request(operation, GETparameters = GETparameters, ...)
-    if(is.null(request$valid))
-        return(request)
-    if(request$valid == TRUE) {
-        ReviewResults <- as.data.frame.ReviewResults(xml.parsed = xmlParse(request$xml))
-        if(verbose) {
-            message("ReviewResults Retrieved: ", appendLF=FALSE)
-            if(is.null(ReviewResults)) 
-                message("0\n")
-            else {
-                if("AssignmentReviewResult" %in% names(ReviewResults)) 
-                    message(length(ReviewResults$AssignmentReviewResults), 
-                            " Assignment ReviewResults Retrieved")
-                if("AssignmentReviewAction" %in% names(ReviewResults)) 
-                    message(length(ReviewResults$AssignmentReviewResults), 
-                            " Assignment ReviewActions Retrieved")
-                if("HITReviewResult" %in% names(ReviewResults)) 
-                    message(length(ReviewResults$AssignmentReviewResults), 
-                            " HIT ReviewResults Retrieved")
-                if("HITReviewAction" %in% names(ReviewResults)) 
-                    message(length(ReviewResults$AssignmentReviewResults), 
-                            " HIT ReviewActions Retrieved")
-            }
+    if(as.numeric(pagesize) < 1) 
+        stop("'pagesize' must be greater than 1")
+    if(as.numeric(pagenumber) < 1) 
+        stop("'pagenumber' must be greater than 1")
+    if(return.all == TRUE) {
+        pagesize <- "65535"
+        pagenumber <- "1"
+    }
+    batch <- function(pagenumber){
+        GETiteration <- paste(GETparameters, 
+                              "&PageNumber=", pagenumber, 
+                              "&PageSize=", pagesize, sep = "")        
+        batch <- request(operation, GETparameters = GETiteration, ...)
+        if(is.null(batch$valid))
+            return(batch)
+        else 
+            return(as.data.frame.ReviewResults(xml.parsed = xmlParse(request$xml)))
+    }
+    request <- batch(pagenumber)
+    if(return.all){
+        runningtotal <- request$AssignmentResults
+        pagenumber <- 2
+        while(request$AssignmentTotalResults > runningtotal) {
+            nextbatch <- batch(pagenumber)
+            request$AssignmentReviewResult <- rbind(request$AssignmentReviewResult, nextbatch$AssignmentReviewResult)
+            request$AssignmentReviewAction <- rbind(request$AssignmentReviewAction, nextbatch$AssignmentReviewAction)
+            request$HITReviewResult <- rbind(request$HITReviewResult, nextbatch$HITReviewResult)
+            request$HITReviewAction <- rbind(request$HITReviewAction, nextbatch$HITReviewAction)
+            runningtotal <- runningtotal + nextbatch$AssignmentTotalResults
+            pagenumber <- pagenumber + 1
         }
-    } else if(!request$valid & verbose)
-        warning("Invalid Request")
-    return(ReviewResults)
+        request$AssignmentResults <- NULL
+        request$AssignmentTotalResults <- NULL
+    }   
+    if(verbose) {
+        message("ReviewResults Retrieved: ", appendLF=FALSE)
+        if(is.null(request))
+            message("0\n")
+        else {
+            if("AssignmentReviewResult" %in% names(request)) 
+                message(length(request$AssignmentReviewResults), 
+                        " Assignment ReviewResults Retrieved")
+            if("AssignmentReviewAction" %in% names(request)) 
+                message(length(request$AssignmentReviewActions), 
+                        " Assignment ReviewActions Retrieved")
+            if("HITReviewResult" %in% names(request)) 
+                message(length(request$HITReviewResults), 
+                        " HIT ReviewResults Retrieved")
+            if("HITReviewAction" %in% names(request)) 
+                message(length(request$HITReviewActions), 
+                        " HIT ReviewActions Retrieved")
+        }
+    }
+    return(request)
 }

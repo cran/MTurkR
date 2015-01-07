@@ -11,8 +11,12 @@ function (subjects, msgs, workers, batch = FALSE,
         subjects <- as.character(subjects)
     if(is.factor(msgs))
         msgs <- as.character(msgs)
-    if(is.factor(workers))
+    if(is.factor(workers)){
         workers <- as.character(workers)
+        if(length(workers) > length(unique(workers)))
+            warning("Duplicated WorkerIds removed from 'workers'")
+        workers <- unique(workers)
+    }
     if(batch) {
         if(length(msgs) > 1) 
             stop("If 'batch'==TRUE, only one message can be used")
@@ -22,50 +26,26 @@ function (subjects, msgs, workers, batch = FALSE,
             stop("If 'batch'==TRUE, only one subject can be used")
         else if(nchar(curlEscape(msgs)) > 4096) 
             stop("Message Text Too Long (4096 char max)")
-        nbatches <- ceiling(length(workers)/100)
-        lastbatch <- length(workers) - (100 * (nbatches - 1))
+
         Notifications <- setNames(data.frame(matrix(nrow = length(workers), ncol = 4)),
-                            c("WorkerId", "Subject", "Message", "Valid"))
+                    c("WorkerId", "Subject", "Message", "Valid"))
         Notifications$WorkerId <- workers
         Notifications$Subject <- subjects
         Notifications$Message <- msgs
-        #Notifications <- setNames(data.frame(matrix(nrow = nbatches, ncol = 6)),
-        #                    c("Batch", "FirstWorkerId", "LastWorkerId", 
-        #                    "Subject", "Message", "Valid"))
-        i <- 1
-        j <- 1
-        while(j <= nbatches) {
-            GETworkers <- ""
-            firstworker <- ""
-            lastworker <- ""
-            if(j == nbatches) {
-                workerbatch <- workers[i:(i + (lastbatch - 1))]
-                upper <- lastbatch
-            }
-            else {
-                workerbatch <- workers[i:(i + 99)]
-                upper <- 100
-            }
-            for(k in 1:upper) {
-                GETworkers <- paste(GETworkers, "&WorkerId.", k,
-                                    "=", workerbatch[k], sep = "")
-                if(k == 1) 
-                    firstworker <- workerbatch[k]
-                else if(k == upper) 
-                    lastworker <- workerbatch[k]
-            }
-            GETparameters <- paste("&Subject=", curlEscape(subjects), 
-                                   "&MessageText=", curlEscape(msgs), GETworkers, 
-                                   sep = "")
+
+        workerbatch <- split(workers, rep(1:((length(workers) %/% 100) + 1), each = 100)[1:length(workers)])
+        for(i in 1:length(workerbatch)){
+            GETworkers <- paste0("&WorkerId.", seq_along(workerbatch[[i]]), "=", 
+                                 workerbatch[[i]], collapse = "")
+            GETparameters <- paste0("&Subject=", curlEscape(subjects), 
+                                   "&MessageText=", curlEscape(msgs), GETworkers)
             request <- request(operation, GETparameters = GETparameters, ...)
             if(is.null(request$valid))
                 return(request)
-            Notifications$Valid[i:(i + (lastbatch - 1))] <- request$valid
-            #Notifications[j, ] <- c(nbatches, firstworker, lastworker,
-            #                        subjects, msgs, request$valid)
+            Notifications$Valid[Notifications$WorkerId %in% workerbatch[[i]]] <- request$valid
             if(request$valid == TRUE) {
                 if(verbose)
-                    message(j, ": Workers ", firstworker, " to ",lastworker, " Notified")
+                    message(i, ": Workers ", workerbatch[[i]][1], " to ", tail(workerbatch[[i]],1), " Notified")
                 parsed <- xmlParse(request$xml)
                 if(length(getNodeSet(parsed, '//NotifyWorkersFailureStatus'))>0){
                     x <- xpathApply(parsed, '//NotifyWorkersFailureStatus', function(x) {
@@ -74,19 +54,15 @@ function (subjects, msgs, workers, batch = FALSE,
                         message(paste("Invalid Request for worker ",w, ": ",f,sep=""))
                         return(c(w,f))
                     })
-                    for(i in 1:length(x))
-                        Notifications$Valid[Notifications$Worker==x[[i]][1]] <- 'HardFailure'
+                    for(k in 1:length(x))
+                        Notifications$Valid[Notifications$WorkerId==x[[k]][1]] <- 'HardFailure'
                 }
-            }
-            else if(request$valid == FALSE) {
+            } else if(request$valid == FALSE) {
                 if(verbose) 
-                    warning(j,": Invalid Request for workers ",firstworker," to ",lastworker)
+                    warning(i,": Invalid Request for workers ", workerbatch[[i]][1], " to ", tail(workerbatch[[i]],1))
             }
-            i <- i + 100
-            j <- j + 1
         }
-    }
-    else {
+    } else {
         for(i in 1:length(subjects)) {
             if(nchar(curlEscape(subjects[i])) > 200) 
                 stop(paste("Subject ", i, " Too Long (200 char max)", sep = ""))

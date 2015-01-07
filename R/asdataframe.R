@@ -283,27 +283,23 @@ as.data.frame.Qualifications <- function(xml.parsed) {
 as.data.frame.QuestionForm <- function(xml.parsed) {
     qform <- xmlChildren(xmlChildren(xml.parsed)$QuestionForm)
     n <- names(qform)
-    out <- mapply(function(x, name){
+    out <- mapply(function(x, name, elementnumber){
         if(name=='Question'){
-            list(Element = 'Question',
+            list(ElementNumber = elementnumber,
+                 Element = 'Question',
                  QuestionIdentifier = xmlValue(xmlChildren(x)$QuestionIdentifier),
                  DisplayName = xmlValue(xmlChildren(x)$DisplayName),
                  IsRequired = xmlValue(xmlChildren(x)$IsRequired),
                  QuestionContent = xmlValue(xmlChildren(x)$QuestionContent),
                  AnswerSpecification = xmlValue(xmlChildren(x)$AnswerSpecification) )
         } else if(name=='Overview'){
-            # this doesn't handle multiple elements well
-            list(Element = 'Overview',
-                 Title = xmlValue(xmlChildren(x)$Title),
-                 Text = xmlValue(xmlChildren(x)$Text),
-                 List = sapply(xmlChildren(x)$Text, xmlValue),
-                 Binary = xmlToList(xmlChildren(x)$Binary),
-                 Application = xmlToList(xmlChildren(x)$Application),
-                 EmbeddedBinary = xmlToList(xmlChildren(x)$EmbeddedBinary),
-                 FormattedContent = xmlChildren(x)$FormattedContent )
+            append(list(ElementNumber = elementnumber, 
+                        Element = 'Overview'),
+                lapply(xmlChildren(x), xmlValue))
         }
-    }, qform, n)
-    return(do.call('rbind',out))
+    }, qform, n, elementnumber = seq_along(n))
+    return(list(Question = do.call('rbind.data.frame',out[names(out)=="Question"]), 
+                Overview = do.call('rbind.data.frame',out[names(out)=="Overview"])))
 }
 
 as.data.frame.HTMLQuestion <- function(xml.parsed) {
@@ -331,7 +327,7 @@ as.data.frame.ExternalQuestion <- function(xml.parsed) {
 as.data.frame.AnswerKey <- function(xml.parsed) {
     nodes <- xmlChildren(xmlChildren(xml.parsed)$AnswerKey)
     # need to change this to an xpath expression:
-    answerkey <- data.frame(matrix(nrow = length(strsplit(toString(xml.parsed),'/AnswerOption')[[1]])-1,
+    answerkey <- data.frame(matrix(nrow = length(strsplit(toString.XMLNode(xml.parsed),'/AnswerOption')[[1]])-1,
                                    ncol = 3))
     names(answerkey) <- c("QuestionIdentifier", "SelectionIdentifier", "AnswerScore")
     k <- 1
@@ -407,14 +403,12 @@ as.data.frame.QuestionFormAnswers <- function(xml.parsed) {
             if(length(xmlChildren(questions[[z]])$FreeText) == 1) {
                 out$FreeText[z] <- xmlValue(xmlChildren(questions[[z]])$FreeText)
                 out$Combined.Answers[z] <- xmlValue(xmlChildren(questions[[z]])$FreeText)
-            }
-            else if(length(xmlChildren(questions[[z]])$UploadedFileKey) == 1) {
+            } else if(length(xmlChildren(questions[[z]])$UploadedFileKey) == 1) {
                 out$UploadedFileKey[z] <- xmlValue(xmlChildren(questions[[z]])$UploadedFileKey)
                 out$UploadedFileSizeInBytes[z] <- xmlValue(xmlChildren(questions[[z]])$UploadedFileSizeInBytes)
                 out$Combined.Answers[z] <- paste(out$UploadedFileKey[z], 
                     out$UploadedFileSizeInBytes[z], sep = ":")
-            }
-            else if (length(xmlChildren(questions[[z]])$SelectionIdentifier) == 1) {
+            } else if (sum(names(xmlChildren(questions[[z]])) == "SelectionIdentifier") == 1) {
                 out$SelectionIdentifier[z] <- xmlValue(xmlChildren(questions[[z]])$SelectionIdentifier)
                 out$Combined.Answers[z] <- xmlValue(xmlChildren(questions[[z]])$SelectionIdentifier)
                 if(length(xmlChildren(questions[[1]])$OtherSelectionField) == 1) {
@@ -424,23 +418,19 @@ as.data.frame.QuestionFormAnswers <- function(xml.parsed) {
                     out$Combined.Answers[z] <- multiple
                     rm(multiple)
                 }
-            }
-            else if(length(xmlChildren(questions[[z]])$SelectionIdentifier) > 1) {
+            } else if(sum(names(xmlChildren(questions[[z]])) == "SelectionIdentifier") > 1) {
                 multiple <- ""
-                for(j in 1:length(xmlChildren(questions[[z]])$SelectionIdentifier)) {
-                    multiple <- paste(multiple,
-                                xmlValue(xmlChildren(xmlChildren(questions[[z]])[j]$QuestionIdentifier)$text),
-                                sep = ";")
-                }
-                if(length(xmlChildren(questions[[z]])$OtherSelectionField) == 1) 
+                n <- names(xmlChildren(questions[[z]])) == "SelectionIdentifier"
+                multiple <- paste(unname(sapply(xmlChildren(questions[[1]])[n], xmlValue)), collapse = ";")
+                if(any(names(xmlChildren(questions[[z]])) == "OtherSelectionField")) { 
                     multiple <- paste(multiple,
                                 xmlValue(xmlChildren(questions[[z]])$OtherSelectionField), 
                                 sep = ";")
+                }
                 out$SelectionIdentifier[z] <- multiple
                 out$Combined.Answers[z] <- multiple
                 rm(multiple)
-            }
-            else if(length(xmlChildren(questions[[z]])$OtherSelectionField) == 1) {
+            } else if(length(xmlChildren(questions[[z]])$OtherSelectionField) == 1) {
                 out$OtherSelectionField[z] <- xmlValue(xmlChildren(questions[[z]])$OtherSelectionField)
                 out$Combined.Answers[z] <- xmlValue(xmlChildren(questions[[z]])$OtherSelectionField)
             }
@@ -463,15 +453,21 @@ as.data.frame.ReviewResults <- function(xml.parsed) {
                 HITReviewAction = NULL)
     if(!is.null(hit.xml) && length(hit.xml) >= 1) {
         hit <- xmlValue(xpathApply(xml.parsed, "//HITId")[[1]])
-        if(length(xpathApply(xml.parsed, "//AssignmentReviewPolicy")) > 0) 
+        if(length(xpathApply(xml.parsed, "//AssignmentReviewPolicy")) > 0)  {
             assignment.policy <- 
               xmlValue(xpathApply(xml.parsed, "//AssignmentReviewPolicy")[[1]])
-        else
+            out$AssignmentResults <- as.numeric(xmlValue(xpathApply(xml.parsed, "//AssignmentReviewReport/NumResults")[[1]]))
+            out$AssignmentTotalResults <- as.numeric(xmlValue(xpathApply(xml.parsed, "//AssignmentReviewReport/TotalNumResults")[[1]]))
+        } else {
             assignment.policy <- NA
-        if(length(xpathApply(xml.parsed, "//HITReviewPolicy")) > 0) 
+            out$AssignmentResults <- 0
+            out$AssignmentTotalResults <- 0
+        }
+        if(length(xpathApply(xml.parsed, "//HITReviewPolicy")) > 0) {
             hit.policy <- xmlValue(xpathApply(xml.parsed, "//HITReviewPolicy")[[1]])
-        else
+        } else {
             hit.policy <- NA
+        }
         if(!is.na(assignment.policy)) {
             assignment.report <- 
               xmlChildren(xpathApply(xml.parsed, "//AssignmentReviewReport")[[1]])
@@ -544,7 +540,7 @@ as.data.frame.ReviewResults <- function(xml.parsed) {
                         HITReviewResult$Key[r] <- xmlValue(xmlChildren(hit.report[[i]])$Key)
                         HITReviewResult$Value[r] <- xmlValue(xmlChildren(hit.report[[i]])$Value)
                         r <- r + 1
-                    } else if(xmlName(hit.report[[i]]) == "ReviewResult") {
+                    } else if(xmlName(hit.report[[i]]) == "ReviewAction") {
                         HITReviewAction$HITReviewPolicy[a] <- hit.policy
                         HITReviewAction$ActionId[a] <- xmlValue(xmlChildren(hit.report[[i]])$ActionId)
                         HITReviewAction$ActionName[a] <- xmlValue(xmlChildren(hit.report[[i]])$ActionName)

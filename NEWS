@@ -1,3 +1,33 @@
+# CHANGES TO MTurkR 0.6 #
+
+## SIGNIFICANT USER-VISIBLE CHANGES ##
+
+* `GetReviewResults` should now be able to return all results. This is untested due to the large page size of ReviewResults (65,535). (#54)
+* The graphical wizard now uses "themed" tk (ttk) widgets where possible, in order to improve the appearance. This creates a dependency on tcl >= 8.5.
+* The graphical wizard now allows retrieval of assignments by requester annotation (or batch) field.
+* The graphical and text-based wizards now allow you to preview the email that will be sent to workers using the `ContactWorkers` function. (#53)
+* The graphical and text-based wizards now allow users to assign qualifications to workers. (#61)
+* The graphical user interface (`mturkr.wizard`) has a significantly cleaned up code base aimed at simplifying future bug fixes. A user-visible side effect of this is modified aesthetics that should make the interface more attractive and more uniform. (#56)
+* `mturkr.wizard` now allows users to enter multiple WorkerIds for several functions by simply pasting one WorkerId per line into a multi-line textbox. (#52, h/t Justin Weigand)
+* `GetReviewResultsForHIT` now has `pagenumber` and `pagesize` arguments to control pagination of results. (#54)
+
+## DOCUMENTATION ##
+
+* Documentation for `CreateHIT` and `CreateQualificationType` now include examples using template files installed with the package. (#40)
+* Documentation of generating a Masters QualificationRequirement has been slightly clarified.
+* Examples of Amazon Simple Queue Service (SQS) notifications have been added, along with a detailed tutorial on the MTurk wiki. (#60)
+
+## BUG FIXES ##
+
+* Fixed a bug in the wizard that prevented the user from clearing and viewing QualificationRequirements that had been added to a HITType.
+* Numerous related bug fixes in the wizard related to populating HITId, HITTypeId, and QualificationTypeId fields were fixed. (#69)
+* Wizard balance checking message box now reports balance correctly. (#67)
+* Wizard dialogs for adding question data structures to a HIT did not close on accepting "OK". (#65)
+* `GetAssignments` only returned the first answer option when multiple selection answers were chosen by a worker. (#63, h/t Kyle Harms)
+* Fixed a possible bug in `ContactWorkers` batch mode that sent multiple emails to the same worker(s). (#58, h/t Andy Guess)
+* Fixed a few XML-related bugs in `as.data.frame.QuestionForm` and `as.data.frame.AnswerKey`.
+
+
 # CHANGES TO MTurkR 0.5.5 #
 
 ## SIGNIFICANT USER-VISIBLE CHANGES ##
