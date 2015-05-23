@@ -16,15 +16,14 @@ function (hit.type = NULL, question = NULL, validate.question = FALSE,
     if(!is.null(hit.type)) {
         if(is.factor(hit.type))
             hit.type <- as.character(hit.type)
-        if( !is.null(title) || !is.null(description) ||
-            !is.null(reward) || !is.null(duration))
+        if( (!is.null(title) || !is.null(description) ||
+            !is.null(reward) || !is.null(duration)) & verbose)
             warning("HITType specified, HITType parameters (title, description, reward, duration) ignored")
         GETparameters <- paste("&HITTypeId=", hit.type, sep = "")
-    }
-    else {
-        if(is.null(title) || is.null(description) || is.null(reward) || is.null(duration)) 
+    } else {
+        if(is.null(title) || is.null(description) || is.null(reward) || is.null(duration)) {
             stop("Must specify HITType xor HITType parameters (title, description, reward, duration)")
-        else {
+        } else {
             register <- RegisterHITType(title, description, reward, 
                 duration, keywords = keywords, auto.approval.delay = auto.approval.delay, 
                 qual.req = qual.req, ...)
@@ -41,9 +40,9 @@ function (hit.type = NULL, question = NULL, validate.question = FALSE,
             GETparameters <- paste(GETparameters, "&HITLayoutId=", hitlayoutid, sep = "")
             if(!is.null(hitlayoutparameters)) 
                 GETparameters <- paste(GETparameters, hitlayoutparameters, sep = "")
-        }
-        else
+        } else {
             stop("Must specify QuestionForm, HTMLQuestion, or ExternalQuestion for 'question' parameter; or a 'hitlayoutid'")
+        }
     } else {
         if(class(question) %in% c('HTMLQuestion','ExternalQuestion'))
             question <- question$string
@@ -106,8 +105,7 @@ function (hit.type = NULL, question = NULL, validate.question = FALSE,
     if(is.null(request$valid))
         return(request)
     if(request$valid) {
-        HITs <- setNames(data.frame(matrix(ncol=3, nrow=1)),
-                c("HITTypeId", "HITId", "Valid"))
+        HITs <- setNames(data.frame(matrix(ncol=3, nrow=1)), c("HITTypeId", "HITId", "Valid"))
         hit <- strsplit(strsplit(request$xml, "<HITId>")[[1]][2], "</HITId>")[[1]][1]
         if(is.null(hit.type)) 
             hit.type <- strsplit(strsplit(request$xml, "<HITTypeId>")[[1]][2], "</HITTypeId>")[[1]][1]

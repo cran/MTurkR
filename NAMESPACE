@@ -3,7 +3,6 @@
 
 # deprecated
 #export("APIReference")
-#export("authenticate")
 #export("mturkhelp")
 #export("genericmturkr")
 #export("makeGETparameters")
@@ -185,7 +184,10 @@ export("GenerateAssignmentReviewPolicy")
 export("GenerateHITReviewPolicy")
 
 export("GenerateHITsFromTemplate")
-export("hitsfromtemplate")
+export("BulkCreate")
+export("BulkCreateFromTemplate")
+export("BulkCreateFromURLs")
+export("BulkCreateFromHITLayout")
 
 # imports
 importFrom(digest, hmac)

@@ -1,3 +1,31 @@
+# CHANGES TO MTurkR 0.6.5 #
+
+## SIGNIFICANT USER-VISIBILE CHANGES ##
+
+* Added `BulkCreate`, `BulkCreateFromTemplate`, `BulkCreateFromURLs`, and `BulkCreateFromHITLayout` functions that can be used to create multiple HITs of the same HITType with identical properties but different question content. The `hitsfromtemplate` function has been removed. (#76)
+* The graphical wizard now supports creating HIT- and Assignment-level ReviewPolicies during HIT creation. (#55)
+* `CreateHIT` now only warns about duplicated arguments (passing both `hit.type` and arguments for `RegisterHITType`) if `verbose = TRUE`.
+* The graphical wizard now allows users to create an Qualification AnswerKey Template (via `AnswerKeyTemplate`) from a manually entered Qualification Test. (#73)
+* `GrantBonus` now accepts a `unique.request.token` argument. (#75)
+* The unused `format` argument to `GenerateNotification` has been removed. (#71)
+
+## DOCUMENTATION ##
+
+* Examples have been added to demonstrate functionality of `AnswerKeyTemplate`.
+* Documentation for `GrantQualification` and `RejectQualification` has been merged to clarify the use of these functions. Documentation has been expanded with complete examples of both functions. (#72)
+* `GenerateQualificationRequirement` now notes that U.S. state locale values (following ISO 3166-2 format) are allows. (#74)
+* `GenerateHITsFromTemplate` now has a more complete example that includes an installed template HTML file. (#72)
+* Several small changes have been made to correct documentation and fix bad formatting in the PDF version of the manual. (#72)
+
+## BUG FIXES ##
+
+* Fixed a bug in the CreateQualification dialog of the graphical wizard related to destroying the dialog. (h/t Sean Murphy)
+* Fixed a bug in the AssignQualification dialog of the graphical wizard. (h/t Carolina Kuepper-Tetzel)
+* Loading MTurkR no longer overwrites existing MRurkR `options`. (#83)
+* `GetStatistic` now consistently returns a three-column data frame containing the name of the requested statistic, its value, and the date of the statistic. If the request fails, this data.frame has zero rows. Printing of request information (if `verbose = TRUE`) has further been fixed to prevent incorrect printing when `count` was specified. (#78)
+* Fixed a bug in `ExtendHIT` wherein specifying both `add.assignments` and `add.seconds` caused only assignments to be incremented. (#79)
+
+
 # CHANGES TO MTurkR 0.6 #
 
 ## SIGNIFICANT USER-VISIBLE CHANGES ##
