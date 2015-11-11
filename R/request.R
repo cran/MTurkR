@@ -13,19 +13,26 @@ function(operation, GETparameters = NULL,
         host <- "https://mechanicalturk.sandbox.amazonaws.com/"
     else
         host <- "https://mechanicalturk.amazonaws.com/"
-    if(is.null(keypair))
-        stop("No keypair provided or 'credentials' object not stored")
+    if(is.null(keypair)) {
+        key <- Sys.getenv("AWS_ACCESS_KEY_ID")
+        secret <- Sys.getenv("AWS_SECRET_ACCESS_KEY")
+        if(key != "" & secret != "") {
+            options(MTurkR.keypair = c(key,secret))
+        } else {
+            stop("No keypair provided or 'credentials' object not stored")
+        }
+    }
     keyid <- keypair[1]
     secret <- keypair[2]
     host <- paste(host, "?Service=", service, sep='')
     timestamp <- format(Sys.time(), format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
-    signature <- base64Encode(hmac(secret, paste(service, operation, 
+    signature <- base64encode(hmac(secret, paste(service, operation, 
             timestamp, sep = ""), algo = "sha1", serialize = FALSE, raw = TRUE))[1]
     urlparameters <- paste("&AWSAccessKeyId=", keyid, 
                            if(!is.null(version)) paste0("&Version=", version) else "", 
                            "&Operation=", operation, 
                            "&Timestamp=", timestamp, 
-                           "&Signature=", curlEscape(signature), 
+                           "&Signature=", curl_escape(signature), 
                            GETparameters, sep = "")
     request.url <- paste(host, urlparameters, sep='')
     if(validation.test){
@@ -47,16 +54,9 @@ function(operation, GETparameters = NULL,
                                   xml = NULL),
                              class='MTurkResponse'))
         } else {
-            h <- basicTextGatherer()
-            curlPerform(url=host,
-                        httpheader=c('Content-Type'='application/x-www-form-urlencoded'),
-                        postfields=urlparameters,
-                        followlocation = 1L, ssl.verifypeer = 1L, ssl.verifyhost = 2L, 
-                        cainfo = system.file("CurlSSL",
-                                             "cacert.pem",
-                                             package = "RCurl"),
-                        writefunction=h$update)
-            response <- h$value()
+            h <- new_handle(postfields = urlparameters)
+            fetch <- curl_fetch_memory(url = host, handle = h)
+            response <- rawToChar(fetch$content)
 
             # Additional filters, added by Solomon Messing 6/9/2013:
             clean <- function(x, pattern, replacement){
@@ -179,7 +179,7 @@ print.MTurkResponse <- function(x,...){
     if(!is.null(x$valid))
         cat('Valid?         ',x$valid,'\n')
     if(!is.null(x$request.url))
-        cat('Request URL:   ',gsub('&','\n',curlUnescape(x$request.url),'\n'))
+        cat('Request URL:   ',gsub('&','\n',curl_unescape(x$request.url),'\n'))
     if(!is.null(x$xml)){
         cat('XML Response:\n')
         print(xmlParse(x$response))

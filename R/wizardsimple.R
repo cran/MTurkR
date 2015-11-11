@@ -3,7 +3,7 @@ function (graphics = FALSE, sandbox = NULL, ...)
 {
     message("MTurkR Wizard loading...\n")
     log.requests <- TRUE
-    internet.test <- try(curlPerform(url="http://www.example.com"), silent = TRUE)
+    internet.test <- try(curl_fetch_memory(url="http://www.example.com"), silent = TRUE)
     if (class(internet.test) == "try-error") {
         message("An internet connection does not appear to be available!\n")
     }
@@ -431,7 +431,7 @@ function (graphics = FALSE, sandbox = NULL, ...)
                 message("Please enter information for QualificationType below")
                 name <- readline(prompt = "Name for QualificationType (Workers can see this): ")
                 description <- readline(prompt = "Description QualificationType (Workers can see this): ")
-                if (nchar(curlEscape(description)) > 2000) {
+                if (nchar(curl_escape(description)) > 2000) {
                   message("Description must be less than ~2000 characters")
                   description <- readline(prompt = "Description QualificationType (Workers can see this): ")
                 }
