@@ -4,9 +4,6 @@ function (response.group = NULL, return.all = TRUE, pagenumber = "1",
     pagesize = "10", sortproperty = "Enumeration", sortdirection = "Ascending", 
     return.hit.dataframe = TRUE, return.qual.dataframe = TRUE,
     verbose = getOption('MTurkR.verbose', TRUE), ...) {
-    # temporary check for `print` argument (remove after v1.0)
-    if('print' %in% names(list(...)) && is.null(verbose))
-        verbose <- list(...)$print
     if('sandbox' %in% names(list(...)))
         sandbox <- list(...)$sandbox
     else
@@ -53,7 +50,10 @@ function (response.group = NULL, return.all = TRUE, pagenumber = "1",
             "<TotalNumResults>")[[1]][2], "</TotalNumResults>")[[1]][1])
         batch$batch.total <- length(xpathApply(xmlParse(batch$xml), "//HIT"))
         if(return.hit.dataframe == TRUE) {
-            if(batch$total > 0) {
+            if (!batch$valid) {
+                stop("SearchHITs() request failed!")
+            }
+            if (batch$total > 0) {
                 hitlist <- as.data.frame.HITs(xml.parsed = xmlParse(batch$xml),
                                               return.qual.list = return.qual.dataframe,
                                               sandbox = sandbox)
