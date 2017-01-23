@@ -34,7 +34,7 @@ Retrieve a specific requester or worker statistic. The list of available statist
 
 \code{statistic()} is an alias for \code{GetStatistic}. \code{workerstatistic()} is an alias for \code{GetWorkerStatistic}.
 }
-\value{A dataframe containing the Date, Value, and Statistic (and WorkerId, if \code{GetWorkerStatistic} or \code{WorkerReport} are called), and the value thereof. \code{GetStatistic} and \code{GetWorkerStatistic} return only information about the requested statistic as a data.frame. \code{RequesterReport} and \code{WorkerReport} return all of the requester and worker statistics, respectively, that are available in \code{\link{ListStatistics}}.}
+\value{A data frame containing the Date, Value, and Statistic (and WorkerId, if \code{GetWorkerStatistic} or \code{WorkerReport} are called), and the value thereof. \code{GetStatistic} and \code{GetWorkerStatistic} return only information about the requested statistic as a data.frame. \code{RequesterReport} and \code{WorkerReport} return all of the requester and worker statistics, respectively, that are available in \code{\link{ListStatistics}}.}
 \references{
 \href{http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterStatisticOperation.html}{API Reference: Requester Statistics}
 
@@ -47,7 +47,7 @@ Retrieve a specific requester or worker statistic. The list of available statist
 }
 \examples{
 \dontrun{
-GetStatistic("NumberHITsSubmitted","OneDay")
+GetStatistic("NumberHITsCompleted","OneDay")
 RequesterReport("ThirtyDays")
 GetWorkerStatistic("A1RO9UJNWXMU65","PercentHITsApproved","LifeToDate")
 WorkerReport("A1RO9UJNWXMU65","SevenDays")
